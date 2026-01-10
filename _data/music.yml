@@ -53,6 +53,11 @@
 - title: Honors & Competitions
   type: music_table
   contents:
+    - title: Branham High School Music Department
+      institutions:
+        - Director's Award Recipient
+      year: 2025
+      
     - title: Branham High School Music Boosters Scholarship
       institutions:
         - $500 Scholarship Recipient
@@ -113,4 +118,5 @@
 - title: Principal Teacher
   type: time_table
   contents:
+
     - title: Alli Gessner
