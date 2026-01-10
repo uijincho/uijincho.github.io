@@ -2,7 +2,7 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: 
+title: Uijin Cho
 first_name: Uijin 
 middle_name: 
 last_name: Cho
@@ -341,5 +341,6 @@ mdb:
 medium_zoom:
   version: "1.0.6"
   integrity: "sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM="
+
 
 
