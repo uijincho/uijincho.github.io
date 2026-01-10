@@ -21,6 +21,7 @@ I'm interested in exploring ...
 
 **Currently**, I working on getting my paper on [air quality & monsoon trends](https://github.com/uijincho/seoul-monsoon) in Seoul, South Korea published with Dr. Piccione  
 
-I also compete with Brown University Badminton, enjoy [reading](https://goodreads.org/uijincho) in my free time, and play [oboe & english horn](/music) in musical productions.
+I also compete with Brown University Badminton, enjoy [reading](https://goodreads.com/uijincho) in my free time, and play [oboe & english horn](/music) in musical productions.
+
 
 **Contact me** at `uijin [_] cho [at] brown [dot] edu`
