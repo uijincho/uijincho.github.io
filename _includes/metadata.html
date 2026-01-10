@@ -68,7 +68,7 @@
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}
     {%- if site.scholar_userid -%}
-        {%- capture link -%}https://scholar.google.com/citations?user={{ site.scholar_userid }}{%- endcapture -%}
+        {%- capture link -%}https://github.com/{{ site.scholar_userid }}{%- endcapture -%}
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}
     {%- if site.semanticscholar_id -%}
@@ -89,6 +89,10 @@
     {%- endif -%}
     {%- if site.linkedin_username -%}
         {%- capture link -%}https://www.linkedin.com/in/{{ site.linkedin_username }}{%- endcapture -%}
+        {%- assign sameaslinks = sameaslinks | push: link -%}
+    {%- endif -%}
+    {%- if site.goodreads_icon -%}
+        {%- capture link -%}https://www.goodreads.com/{{ site.goodreads_username }}{%- endcapture -%}
         {%- assign sameaslinks = sameaslinks | push: link -%}
     {%- endif -%}
     {%- if site.twitter_username -%}

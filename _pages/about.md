@@ -1,11 +1,10 @@
 ---
 layout: about
-title: about
+title: About
 permalink: /
-subtitle:  <a href='https://www.nature.com/articles/nature20563'>Biorhythms</a>, <a href='https://onlinelibrary.wiley.com/doi/full/10.1111/ele.13662'>macroecology & evolution</a>, <a href='https://osf.io/profile/'>open science</a>, <a href='https://www.youtube.com/channel/UCP8ITIDaFZHW68z7KaTyDew'>shorebirds</a>.
 profile:
   align: right
-  image: me_&_kohout_bw_kohout-pop_grey.jpg
+  image: me.png
   image_circular: false # crops the image to make it circular
   address: >
 
@@ -13,16 +12,15 @@ news: false  # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
+Hi, I'm an undergraduate student at Brown University studying applied mathematics, computer science, and education.
 
-I strive to understand the World within and around me. 
+I'm interested in exploring ...
+- how [real world data](https://github.com/uijincho/seoul-monsoon) shapes **sustainability efforts** globally,
+- its influence on **economic decision-making**, as well as 
+- **expanding STEM access** through [education](https://github.com/uijincho/vex-pros) and [hackathons](https://bionicbruins.org/blus-hacks-2025/).
 
-As a **scientist**, I use birds, mainly shorebirds, to explore 
-- <a href='https://www.nature.com/articles/s41598-019-41223-z'>rhythms of parental care</a> and <a href='https://doi.org/10.3389/fevo.2019.00093'>how such rhythms emerge</a>, 
--  <a href='https://www.nature.com/articles/nature20563'>within- and between-species differences in rhythmicities</a> and what may drive such differences, as well as
-- <a href='https://onlinelibrary.wiley.com/doi/full/10.1111/ele.13662'>distribution and evolution of traits across the globe</a>
+**Currently**, I working on getting my paper on [air quality & monsoon trends](https://github.com/uijincho/seoul-monsoon) in Seoul, South Korea published with Dr. Piccione  
 
-**Currently**, I am investigating global similarities in shorebird parental care, global differences in uniparental incubation of shorebirds, biorhythms of red knots and drivers of global variation in the song of songbirds.  
+I also compete with Brown University Badminton, enjoy [reading](https://goodreads.org/uijincho) in my free time, and play [oboe & english horn](/music) in musical productions.
 
-I am an **associate professor** at   [Czech University of Life Sciences Prague](https://www.czu.cz/en) and **collaborate** with [scientists and institutions across the globe](https://doi.org/10.1126/science.aaw8529). 
-
-I am a regular contributor to <a href='https://www.inaturalist.org/people/1583651'>iNaturalist</a>. 
+**Contact me** at `uijin [_] cho [at] brown [dot] edu`
