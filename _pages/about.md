@@ -12,9 +12,9 @@ news: false  # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
-Hi, I'm an undergraduate student at Brown University studying applied mathematics, computer science, and education.
+Hi, I'm an undergraduate student at Brown University exploring applied mathematics, computer science, and education.
 
-I'm interested in exploring ...
+I'm interested in learning more about ...
 - how [real world data](https://github.com/uijincho/seoul-monsoon) shapes **sustainability efforts** globally,
 - its influence on **economic decision-making**, as well as 
 - **expanding STEM access** through [education](https://github.com/uijincho/vex-pros) and [hackathons](https://bionicbruins.org/blus-hacks-2025/).
