@@ -1,8 +1,7 @@
 ---
-layout: cv
-permalink: /resume/
-title: Resume
-nav: true
-nav_order: 3
-cv_pdf: uijincho.pdf
+   permalink: /assets/pdf/uijincho.pdf
+   title: Resume
+   nav: true
+   nav_order: 4
+   redirect: /assets/pdf/uijincho.pdf
 ---

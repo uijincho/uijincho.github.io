@@ -29,6 +29,13 @@
         {%- else %}
           <!-- Title -->
           <div class="title">{{entry.title}}</div>
+
+{%- if entry.note -%}
+<div class="periodical">
+  <span style="font-style: italic; color: #999; font-size: 0.9em;">Built with: {{ entry.note }}</span>
+</div>
+{%- endif -%}
+
           <!-- Author -->
           <div class="author">
           {% assign author_array_size = entry.author_array | size %}
@@ -57,18 +64,18 @@
             {%- endif -%}
             
             {%- if forloop.length > 1 -%}
-              {%- if forloop.first == false -%},&nbsp;{%- endif -%}
-              {%- if forloop.last and author_array_limit == author_array_size -%}and&nbsp;{%- endif -%}
-            {%- endif -%}
-            {%- if author_is_self -%}
-              <em>{{author.first}} {{author.last}}</em>
-            {%- else -%}
-              {%- if coauthor_url -%}
-                <a href="{{coauthor_url}}">{{author.first}} {{author.last}}</a>
-              {%- else -%}
-                {{author.first}} {{author.last}}
-              {%- endif -%}
-            {%- endif -%}
+  {%- if forloop.first == false -%}&nbsp;{%- endif -%}
+  {%- if forloop.last and author_array_limit == author_array_size -%}and&nbsp;{%- endif -%}
+{%- endif -%}
+{%- if author_is_self -%}
+  <a href="{{coauthor_url}}" style="font-weight: normal">{{author.first}} {{author.last}}</a>
+{%- else -%}
+  {%- if coauthor_url -%}
+    <a href="{{coauthor_url}}" style="font-weight: normal">{{author.first}} {{author.last}}</a>
+  {%- else -%}
+    {{author.first}} {{author.last}}
+  {%- endif -%}
+{%- endif -%}
           {%- endfor -%}
           {%- assign more_authors = author_array_size | minus: author_array_limit -%}
           
@@ -124,7 +131,10 @@
             {{ periodical | strip }}
           </div>
         {%- endif %}
-        
+          <div class="periodical">
+          </div>
+
+
           <!-- Links/Buttons -->
           <div class="links">
           {%- if entry.abstract %}
