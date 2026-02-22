@@ -24,6 +24,11 @@
 - title: Ensemble Experience
   type: music_table
   contents:
+    - title: Providence Medical Orchestra
+      institutions:
+        - Oboe I
+      year: 2026 - Present
+      
     - title: Branham High School Wind Ensemble
       institutions:
         - Principal Oboe & Section Leader
@@ -120,3 +125,4 @@
   contents:
 
     - title: Alli Gessner
+
