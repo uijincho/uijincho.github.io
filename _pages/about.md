@@ -19,7 +19,9 @@ I'm interested in learning more about ...
 - its influence on **economic decision-making**, as well as 
 - **expanding STEM access** through [education](https://github.com/uijincho/vex-pros) and [hackathons](https://bionicbruins.org/blus-hacks-2025/).
 
-**Currently**, I'm preparing to present my research on [air quality & monsoon trends](https://github.com/uijincho/seoul-monsoon) in Seoul, South Korea at Brown University's DEEPS Dive Research Symposium. I'm also looking forward to my software engineer internship at GoDaddy and working on research on the Salton Sea with Dr. Mara Freilich this upcoming summer.
+**Currently**, I'm preparing to present my research on [air quality & monsoon trends](https://github.com/uijincho/seoul-monsoon) in Seoul, South Korea at Brown University's DEEPS Dive Research Symposium. 
+
+I'm also **looking forward** to my [software engineer internship](https://www.linkedin.com/posts/uijincho_godaddy-godaddylife-internship-activity-7446984469489569793-_QPb?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADv6uEgB0OZej_hbEhblKHdT5oc63ivr5Fs) at GoDaddy and researching the **Salton Sea Environmental Timeseries** with [Dr. Mara Freilich](https://saltonseascience.org/about-us) this upcoming summer.
 
 I also compete with Brown University Badminton, enjoy [reading](https://goodreads.com/uijincho) in my free time, and play [oboe & english horn](/music) with Providence Medical Orchestra and in musical productions.
 
