@@ -1,13 +1,23 @@
-FROM jekyll/jekyll
-Label MAINTAINER Amir Pourmand
-#install imagemagick tool for convert command
-RUN apk add --no-cache --virtual .build-deps \
-        libxml2-dev \
-        shadow \
-        autoconf \
-        g++ \
-        make \
-    && apk add --no-cache imagemagick-dev imagemagick
+FROM ruby:3.1-slim
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libxml2-dev \
+    libxslt-dev \
+    imagemagick \
+    libmagickwand-dev \
+    git \
+    nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /srv/jekyll
-ADD Gemfile /srv/jekyll/
-RUN bundle install
+
+COPY Gemfile ./
+
+RUN gem install bundler && bundle install
+
+COPY . .
+
+EXPOSE 4000
+
+CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000"]
