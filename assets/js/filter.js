@@ -1,0 +1,1 @@
+document.querySelectorAll(".filter").forEach(function(e){e.addEventListener("click",function(){document.querySelectorAll(".filter").forEach(e=>e.classList.remove("active")),this.classList.add("active");var e=this.dataset.filter;document.querySelectorAll(".row[data-category]").forEach(function(t){"all"===e||t.dataset.category===e?t.style.display="":t.style.display="none"})})});
