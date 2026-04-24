@@ -112,6 +112,27 @@ blockquote {
   }
 }
 
+.filter-bar {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+// projects filter 
+
+.filter {
+  cursor: pointer;
+  color: inherit;
+  font-weight: normal;
+
+  &.active {
+    font-weight: bold;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 @media (min-width: 576px) {
   .profile {
     width: 30%;
