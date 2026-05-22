@@ -12,14 +12,11 @@ news: true
 selected_papers: false
 social: false
 ---
-Hi, I'm an undergraduate student at Brown University exploring applied mathematics, computer science, and education.
+Hi! I'm **Uijin**, a first year student at Brown University studying **applied math + computer science** and **education studies**. 
 
-I'm interested in learning more about ...
-- how [real world data](https://github.com/uijincho/seoul-monsoon) shapes **sustainability efforts** globally,
-- its influence on **economic decision-making**, as well as 
-- **expanding STEM access** through [education](https://github.com/uijincho/vex-pros) and [hackathons](https://bionicbruins.org/blus-hacks-2025/).
+I've published data journalism with [the Brown Daily Herald](https://projects.browndailyherald.com/2026/04/24/courses/), presented [research](https://uijincho.com/assets/pdf/diveposter.pdf) on evolving pollution, and (will have) directed [hackathons](https://hackatbrown.org) on both coasts.
 
-<!-- **Currently**, I'm preparing to present my research on [air quality & monsoon trends](https://github.com/uijincho/seoul-monsoon) in Seoul, South Korea at Brown University's DEEPS Dive Research Symposium. -->
+Since high school, I’ve worked to **expand STEM access** through robotics and hackathons — and next up, I’m hoping to start the `first collegiate-run high school hackathon in Rhode Island`. Long-term, I’m drawn to roles where **product, data, and sustainability** overlap.
 
 I'm also **looking forward** to my [software engineer internship](https://www.linkedin.com/posts/uijincho_godaddy-godaddylife-internship-activity-7446984469489569793-_QPb?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAADv6uEgB0OZej_hbEhblKHdT5oc63ivr5Fs) at GoDaddy and contributing to the **Salton Sea Environmental Timeseries** project with [Dr. Mara Freilich](https://saltonseascience.org/about-us) this upcoming summer.
 
