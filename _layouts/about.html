@@ -42,7 +42,9 @@ layout: default
 
           {% if page.news -%}
           <!-- News -->
-          {%- include news.html %}
+          <div class="news-section">
+  {%- include news.html %}
+</div>
           {%- endif %}
           {% if page.selected_papers -%}
             <!-- Selected papers -->
