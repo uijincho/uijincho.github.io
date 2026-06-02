@@ -3,24 +3,56 @@ layout: page
 permalink: /projects/
 title: Projects
 description: 
-years: [2026,2025,2024]
+display_categories: [lead, swe, data, research]
 nav: true
 nav_order: 1
+horizontal: false
 ---
-<div class="publications">
 
-<div class="filter-bar">
-  <span class="filter active" data-filter="all">all</span> &nbsp;·&nbsp;
-  <span class="filter" data-filter="data">data</span> &nbsp;·&nbsp;
-  <span class="filter" data-filter="web">web</span> &nbsp;·&nbsp;
-  <span class="filter" data-filter="app">app</span>
+<!-- pages/projects.md -->
+<div class="projects">
+{%- if site.enable_project_categories and page.display_categories %}
+  <!-- Display categorized projects -->
+  {%- for category in page.display_categories %}
+  <h2 class="category">{{ category }}</h2>
+  {%- assign categorized_projects = site.projects | where: "category", category -%}
+  {%- assign sorted_projects = categorized_projects | sort: "importance" %}
+  <!-- Generate cards for each project -->
+  {% if page.horizontal -%}
+  <div class="container">
+    <div class="row row-cols-2">
+    {%- for project in sorted_projects -%}
+      {% include projects_horizontal.html %}
+    {%- endfor %}
+    </div>
+  </div>
+  {%- else -%}
+  <div class="grid">
+    {%- for project in sorted_projects -%}
+      {% include projects.html %}
+    {%- endfor %}
+  </div>
+  {%- endif -%}
+  {% endfor %}
+
+{%- else -%}
+<!-- Display projects without categories -->
+  {%- assign sorted_projects = site.projects | sort: "importance" -%}
+  <!-- Generate cards for each project -->
+  {% if page.horizontal -%}
+  <div class="container">
+    <div class="row row-cols-2">
+    {%- for project in sorted_projects -%}
+      {% include projects_horizontal.html %}
+    {%- endfor %}
+    </div>
+  </div>
+  {%- else -%}
+  <div class="grid">
+    {%- for project in sorted_projects -%}
+      {% include projects.html %}
+    {%- endfor %}
+  </div>
+  {%- endif -%}
+{%- endif -%}
 </div>
-
-{%- for y in page.years %}
-  <h2 class="year">{{y}}</h2>
-  {% bibliography -f papers -q @*[year={{y}}]* %}
-{% endfor %}
-
-</div>
-
-<script src="{{ '/assets/js/filter.js' | relative_url }}"></script>
