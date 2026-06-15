@@ -12,7 +12,7 @@ news: true
 selected_papers: false
 social: false
 ---
-Hi! I'm [Uijin / Jin / 의진](https://hearmyname.net/say/ko-kr/%EC%9D%98%EC%A7%84), a first year student at Brown University studying **applied math + computer science** and **education studies**. 
+Hi! I'm [Uijin / Jin / 의진](https://hearmyname.net/say/ko-kr/%EC%9D%98%EC%A7%84), a rising second-year student at Brown University studying **applied math + computer science**. 
 
 I've published data journalism with [the Brown Daily Herald](https://projects.browndailyherald.com/2026/04/24/courses/), presented [research](https://uijincho.com/assets/pdf/diveposter.pdf) on evolving pollution, and (will have) directed [hackathons](https://hackatbrown.org) on both coasts.
 
