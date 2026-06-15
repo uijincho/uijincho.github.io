@@ -13,7 +13,12 @@ As a freshman, I was still exploring my interests in STEM and had little idea wh
 
 <div class="row justify-content-center">
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/publication_preview/blushacks.png" title="Blu's Hacks" class="img-fluid rounded z-depth-1" %}
+        <div style="height: 150px; overflow: hidden; position: relative;">
+            <img src="/assets/img/publication_preview/blushacks.png" 
+                 title="Blu's Hacks" 
+                 class="img-fluid rounded z-depth-1"
+                 style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%);">
+        </div>
     </div>
 </div>
 
