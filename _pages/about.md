@@ -14,7 +14,7 @@ social: false
 ---
 Hi! I'm [Uijin / Jin / 의진](https://hearmyname.net/say/ko-kr/%EC%9D%98%EC%A7%84), a  student at Brown University studying **applied math + computer science**. 
 
-I've published data journalism with [the Brown Daily Herald](https://projects.browndailyherald.com/2026/04/24/courses/), presented [research](https://uijincho.com/assets/pdf/diveposter.pdf) on evolving pollution, and (will have) directed [hackathons](https://hackatbrown.org) on both coasts.
+I've conducted [machine learning research](https://uijincho.com/projects/saltonsea) with satellite data, published data journalism with [the Brown Daily Herald](https://uijincho.com/projects/bdhcab), and (will have) directed [hackathons](https://hackatbrown.org) on both coasts.
 
 Since high school, I’ve worked to **expand STEM access** through robotics and hackathons — and next up, I’m hoping to start the first collegiate-run **high school hackathon in Rhode Island**. 
 
