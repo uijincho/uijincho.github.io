@@ -1,23 +1,22 @@
-FROM ruby:3.1-slim
+FROM node:24-alpine AS development-dependencies-env
+COPY . /app
+WORKDIR /app
+RUN npm ci
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libxml2-dev \
-    libxslt-dev \
-    imagemagick \
-    libmagickwand-dev \
-    git \
-    nodejs \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:24-alpine AS production-dependencies-env
+COPY ./package.json package-lock.json /app/
+WORKDIR /app
+RUN npm ci --omit=dev
 
-WORKDIR /srv/jekyll
+FROM node:24-alpine AS build-env
+COPY . /app/
+COPY --from=development-dependencies-env /app/node_modules /app/node_modules
+WORKDIR /app
+RUN npm run build
 
-COPY Gemfile ./
-
-RUN gem install bundler && bundle install
-
-COPY . .
-
-EXPOSE 4000
-
-CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000"]
+FROM node:24-alpine
+COPY ./package.json package-lock.json /app/
+COPY --from=production-dependencies-env /app/node_modules /app/node_modules
+COPY --from=build-env /app/build /app/build
+WORKDIR /app
+CMD ["npm", "run", "start"]
