@@ -1,10 +1,16 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, type ReactNode } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from "react";
 import HTMLFlipBook from "react-pageflip";
 
 export interface PageFlipController {
   getCurrentPageIndex(): number;
-  flip(page: number): void;
-  getSettings(): { useMouseEvents: boolean; showPageCorners: boolean };
+  flip(page: number, corner?: "top" | "bottom"): void;
+  /** Animated single-leaf turn forward/back — see book-layout.tsx's step
+   * queue, which chains these off onFlip to get genuine one-leaf-at-a-time
+   * motion across multiple sections (flip()/turnToPage() only animate the
+   * final leaf of a jump, snapping intervening spreads instantly). */
+  flipNext(corner?: "top" | "bottom"): void;
+  flipPrev(corner?: "top" | "bottom"): void;
+  getSettings(): { useMouseEvents: boolean; showPageCorners: boolean; flippingTime: number };
   getUI(): { setHandlers(): void; removeHandlers(): void };
 }
 
@@ -47,6 +53,14 @@ export const Book = forwardRef<BookHandle, BookProps>(function Book(
   ref,
 ) {
   const innerRef = useRef<BookHandle>(null);
+  // Tracks page-flip's own FlippingState (via onChangeState below) so the
+  // `is-flipping` class can be toggled on the wrapper — see app.css for
+  // why: the leaf NOT currently participating in a flip stays statically
+  // rendered (page-flip's own `--simple` class) for the flip's entire
+  // duration, including its own copy of any tab it shares with the
+  // incoming leaf, which otherwise visibly doubles up with the incoming
+  // leaf's approaching copy right as the turn finishes.
+  const [isFlipping, setIsFlipping] = useState(false);
 
   useImperativeHandle(ref, () => ({ pageFlip: () => innerRef.current!.pageFlip() }), []);
 
@@ -66,9 +80,16 @@ export const Book = forwardRef<BookHandle, BookProps>(function Book(
 
   return (
     <div
-      className={`transition-[filter] duration-200 ${
-        dimmed ? "pointer-events-none blur-sm brightness-75" : ""
-      }`}
+      className={`transition-[filter] duration-200 ${dimmed ? "pointer-events-none" : ""} ${
+        // Blur/brightness are gated on `!isFlipping`, not just `dimmed`:
+        // navigating straight into a project detail from About also kicks
+        // off a background flip toward /projects, and compositing a live
+        // CSS blur filter over a subtree that's simultaneously mid 3D
+        // page-turn (fresh transforms/clip-paths every animation frame) is
+        // expensive enough to visibly jank that turn. The dim/blur look
+        // still applies the instant the flip settles.
+        dimmed && !isFlipping ? "blur-sm brightness-75" : ""
+      } ${isFlipping ? "is-flipping" : ""}`}
     >
       <HTMLFlipBook
         ref={innerRef}
@@ -97,6 +118,7 @@ export const Book = forwardRef<BookHandle, BookProps>(function Book(
         showPageCorners={interactive}
         disableFlipByClick
         onFlip={(event: { data: number }) => onFlip(event.data)}
+        onChangeState={(event: { data: string }) => setIsFlipping(event.data !== "read")}
       >
         {children}
       </HTMLFlipBook>

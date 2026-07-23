@@ -18,15 +18,22 @@ const journalNotes = [
  * About page's right side: a vertical column of stamps (left side of
  * this page) at the same size as StampCard on the full /projects page —
  * not a shrunken variant — each paired with a short journal-entry style
- * note, plus a handwritten-margin-note style link down to the full
- * /projects spread. That link carries `state: { viaSheet: true }` —
- * book-layout.tsx checks for that flag to render /projects as a
- * bottom-up sliding sheet (see ProjectsSheet.tsx) instead of the usual
- * page-flip, the one deliberate exception to flip-based navigation.
+ * note, plus a corner-fold hotspot down to the full /projects spread.
+ * Interior pages don't have react-pageflip's drag-corner interaction
+ * enabled (see Book.tsx's `interactive` prop, only ever true on Landing),
+ * so this is a plain Link, not a drag affordance. Clicking it just
+ * navigates to /projects, which book-layout.tsx's location-sync turns
+ * into an ordinary single-leaf flip — the same route tabs reach, not a
+ * distinct view.
+ *
+ * Unlike Landing's own corner hint, this renders no visual triangle —
+ * the "turn the page" graphic is meant to read as a Landing-only cue.
+ * The hotspot itself stays exactly where the visual used to be (same
+ * position/size), just invisible, so it's still fully clickable.
  */
 export function ProjectJournal() {
   return (
-    <div className="flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
       <div className="flex flex-1 flex-col justify-between">
         {highlightedProjects.map((project, index) => (
           <div key={project.slug} className="flex items-center gap-4">
@@ -39,13 +46,7 @@ export function ProjectJournal() {
           </div>
         ))}
       </div>
-      <Link
-        to="/projects"
-        state={{ viaSheet: true }}
-        className="mt-6 self-end text-xs italic text-neutral-600 underline decoration-dashed underline-offset-4 hover:text-black"
-      >
-        ↳ more projects, this way
-      </Link>
+      <Link to="/projects" aria-label="Continue to projects" className="absolute bottom-0 right-0 h-8 w-8" />
     </div>
   );
 }

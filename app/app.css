@@ -63,3 +63,24 @@ body {
   left: 0;
   top: 0;
 }
+
+/*
+ * TabColumn ghosting fix (see Book.tsx's `isFlipping` state, toggled off
+ * page-flip's own onChangeState). During any single-leaf flip, the leaf
+ * NOT participating in that specific turn stays statically rendered for
+ * the flip's entire duration (page-flip marks it `--simple`) — including
+ * its own copy of any tab it shares with the incoming leaf (e.g. "About",
+ * present on every page from About onward). That static copy doesn't
+ * disappear until the instant the turn completes, so right before then it
+ * visibly doubles up with the incoming leaf's own approaching copy of the
+ * same tab. Fading it out for the flip's duration (rather than leaving it
+ * fully opaque) removes that doubled-tab flash; the transition lives on
+ * the unconditional rule so it fades back in just as smoothly once the
+ * `is-flipping` class is removed.
+ */
+.stf__item.--simple nav a {
+  transition: opacity 150ms ease-out;
+}
+.is-flipping .stf__item.--simple nav a {
+  opacity: 0;
+}
