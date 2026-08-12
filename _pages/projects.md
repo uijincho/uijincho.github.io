@@ -3,7 +3,7 @@ layout: page
 permalink: /projects/
 title: Projects
 description: 
-display_categories: [lead, swe, data, research]
+display_categories: [swe, research, data, lead]
 nav: true
 nav_order: 1
 horizontal: false
