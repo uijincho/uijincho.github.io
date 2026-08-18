@@ -1,41 +1,42 @@
-import { getAllProjects, getProjectsByKind, getFeaturedProjects } from "@/lib/projects";
+import type { Metadata } from "next";
+import { getProjectsByKind } from "@/lib/projects";
+import { TYPE } from "@/lib/design/type-scale";
+import { CategoryNav } from "@/components/work/CategoryNav";
+import { ProjectSection } from "@/components/work/ProjectSection";
+import { WorkFilter } from "@/components/work/WorkFilter";
 
-// Stage 2 proof-of-life only: a deliberately unstyled list confirming
-// lib/projects.ts reads, parses, and validates all 10 placeholder MDX
-// files correctly. Replaced by the real two-column editorial index in
-// Stage 5 — see the build prompt's /work index spec.
-export default function WorkIndexStub() {
-  const all = getAllProjects();
+export const metadata: Metadata = {
+  title: "Work — Uijin Cho",
+  description: "Software engineering and research projects.",
+};
+
+// Real editorial index, replacing the Stage 2 plain-list proof-of-life.
+// Two-column: a sticky per-track table of contents on desktop
+// (CategoryNav, navigation via #hash anchors), collapsing to a horizontal
+// filter row on mobile (WorkFilter, actual show/hide via CSS).
+export default function WorkIndex() {
   const software = getProjectsByKind("software");
   const research = getProjectsByKind("research");
-  const featured = getFeaturedProjects();
 
   return (
-    <main style={{ padding: 32, fontFamily: "monospace" }}>
-      <h1>Stage 2 content layer check</h1>
-      <p>
-        {all.length} total / {software.length} software / {research.length} research /{" "}
-        {featured.length} featured
-      </p>
-      <ul>
-        {all.map((p) => (
-          <li key={p.slug} style={{ marginBottom: 16 }}>
-            <div>
-              #{p.order} [{p.kind}] <strong>{p.title}</strong>
-              {p.featured ? " ★ featured" : ""}
-            </div>
-            <div>slug: {p.slug}</div>
-            <div>summary: {p.summary}</div>
-            <div>role: {p.role} — {p.timeline}</div>
-            <div>tags: {p.tags.join(", ")}</div>
-            <div>
-              {p.kind === "software" ? `stack: ${p.stack.join(", ")}` : `lab: ${p.lab} — collaborators: ${p.collaborators.join(", ")}`}
-            </div>
-            <div>thumbnails: {p.thumbnails[0]} | {p.thumbnails[1]}</div>
-            <div>links: {JSON.stringify(p.links)}</div>
-          </li>
-        ))}
-      </ul>
+    <main className="mx-auto max-w-5xl px-6 py-16">
+      <h1 className={`${TYPE.displayLg} text-ink`}>Work</h1>
+
+      <div className="mt-12 md:grid md:grid-cols-[180px_1fr] md:gap-16">
+        <aside className="hidden md:block">
+          <div className="sticky top-24 flex flex-col gap-10">
+            <CategoryNav kind="software" projects={software} />
+            <CategoryNav kind="research" projects={research} />
+          </div>
+        </aside>
+
+        <WorkFilter>
+          <div className="flex flex-col gap-20">
+            <ProjectSection kind="software" projects={software} />
+            <ProjectSection kind="research" projects={research} />
+          </div>
+        </WorkFilter>
+      </div>
     </main>
   );
 }

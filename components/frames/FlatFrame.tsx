@@ -8,6 +8,15 @@ interface FlatFrameProps {
   height: number;
   caption?: string;
   className?: string;
+  /**
+   * When true, the frame scales down to fit its container (width/height
+   * still set the aspect ratio, preventing layout shift) instead of
+   * rendering at a fixed pixel size. Use for MDX body images, which can be
+   * wider than the ~68ch prose column; leave false (default) for fixed-size
+   * contexts like the /work index thumbnails, where exact dimensions are
+   * part of the grid layout.
+   */
+  fluid?: boolean;
 }
 
 /**
@@ -20,20 +29,28 @@ interface FlatFrameProps {
  * that separation is what stops a screenshot from ending up in a polaroid
  * by accident.
  */
-export function FlatFrame({ src, alt, width, height, caption, className = "" }: FlatFrameProps) {
+export function FlatFrame({ src, alt, width, height, caption, className = "", fluid = false }: FlatFrameProps) {
   const { src: resolvedSrc, isPlaceholder } = resolveImage(src);
+  const fluidStyle = fluid ? { maxWidth: "100%", width: "100%", aspectRatio: `${width} / ${height}` } : undefined;
 
   return (
-    <figure className={`inline-block border border-rule ${className}`}>
+    <figure className={`inline-block border border-rule ${className}`} style={fluid ? { maxWidth: "100%" } : undefined}>
       {isPlaceholder ? (
         <div
           className="flex items-center justify-center bg-raised font-mono text-[10px] uppercase tracking-wide text-ink-muted"
-          style={{ width, height }}
+          style={fluidStyle ?? { width, height }}
         >
           {PLACEHOLDER_LABEL}
         </div>
       ) : (
-        <Image src={resolvedSrc as string} alt={alt} width={width} height={height} className="block" />
+        <Image
+          src={resolvedSrc as string}
+          alt={alt}
+          width={width}
+          height={height}
+          className="block"
+          style={fluid ? { maxWidth: "100%", width: "100%", height: "auto" } : undefined}
+        />
       )}
       {caption ? (
         <figcaption className="border-t border-rule px-2 py-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">

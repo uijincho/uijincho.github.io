@@ -51,3 +51,17 @@ body {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/*
+ * /work mobile filter (components/work/WorkFilter.tsx). The filter row
+ * only sets a data-active-filter attribute; this is what actually hides
+ * sections — plain CSS attribute selectors, no JS-driven display toggling,
+ * scoped to below the md breakpoint since desktop always shows both tracks
+ * via the sticky sidebar instead.
+ */
+@media (max-width: 767px) {
+  [data-active-filter="software"] [data-kind="research"],
+  [data-active-filter="research"] [data-kind="software"] {
+    display: none;
+  }
+}
