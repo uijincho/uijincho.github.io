@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/*
+ * Stage 1 placeholder theme. The full palette (paper/ink/rust/olive/rule),
+ * type scale, and shadow/rotation constants land in Stage 3 (design system).
+ * This just wires up the three core font families so Tailwind's font-*
+ * utilities work end to end.
+ */
+@theme inline {
+  --font-sans: var(--font-archivo);
+  --font-serif: var(--font-newsreader);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  font-family: var(--font-sans);
+}
