@@ -45,24 +45,27 @@ export function NotebookHero() {
   return (
     <section aria-label="Introduction" className="relative flex h-screen w-full items-center justify-center bg-[#e7dbc6] px-4">
       {/* The notebook object: dark cover, ~8px visible as a border via padding.
-          Width scales with the viewport (min(92vw, 1100px)) but interior
+          Width scales with the viewport (min(66vw, 850px), scaled down from
+          an earlier min(92vw, 1100px) pass that read too large — desk
+          margin should read as a frame, not a half-empty page) but interior
           content does NOT — fonts, photo dimensions, and all spacing inside
           the pages stay in their fixed px/rem values regardless of how big
-          the notebook gets. Growing the notebook means more breathing room
-          around unchanged-size content, not bigger content.
+          the notebook gets. Growing/shrinking the notebook changes how much
+          breathing room surrounds unchanged-size content, not the content's
+          own size.
 
           Known trade-off, not an oversight: HeroPhotoStack's pull-out
           offset is a fixed 74px (per spec, and per the instruction that
-          interior spacing stays fixed). At this larger width the page is
-          wide enough that 74px no longer reaches the gutter the way it did
-          at the old ~520px cap — the crossing effect is real at narrower
-          viewports (near the md breakpoint) and becomes a smaller fraction
-          of the page at wider ones. Not compensating for this by scaling
-          the pull distance, since that would itself be exactly the kind of
+          interior spacing stays fixed). At the top of this range the page
+          is wide enough that 74px doesn't reach the gutter the way it did
+          at the original ~520px reference size — the crossing effect is
+          strongest near the md breakpoint and becomes a smaller fraction of
+          the page at wider ones. Not compensating by scaling the pull
+          distance, since that would itself be exactly the kind of
           interior-content scaling this change rules out. */}
       <div
         className="relative bg-[#3b2a1f] p-2"
-        style={{ width: "min(92vw, 1100px)", aspectRatio: "520 / 372" }}
+        style={{ width: "min(66vw, 850px)", aspectRatio: "520 / 372" }}
       >
         <div className="grid h-full grid-cols-[1fr_2px_1fr]">
           {/* Left page: photo stack. position:relative makes this the
@@ -87,13 +90,14 @@ export function NotebookHero() {
               Software engineer and researcher building at the intersection of both.
             </p>
             <div className="mt-6 border-t border-rule pt-4">
+              {/* change to link }
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-xs uppercase tracking-wide text-accent">Software</span>
-                <span className="font-mono text-xs text-ink-muted">{softwareCount}</span>
+                <span className="font-mono text-xs text-ink-muted">&gt;</span>
               </div>
               <div className="mt-2 flex items-baseline justify-between">
                 <span className="font-mono text-xs uppercase tracking-wide text-support">Research</span>
-                <span className="font-mono text-xs text-ink-muted">{researchCount}</span>
+                <span className="font-mono text-xs text-ink-muted">&gt;</span>
               </div>
             </div>
             <p className="mt-8 font-mono text-[11px] uppercase tracking-wide text-ink-muted">Scroll to turn the page</p>

@@ -59,7 +59,25 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop 
             ? "group-hover:-translate-y-[9px] group-hover:rotate-[-1.5deg] group-focus-visible:-translate-y-[9px] group-focus-visible:rotate-[-1.5deg]"
             : ""
         }`}
-        style={{ boxShadow: shadowFor(1) }}
+        // Explicit width (photo + left/right padding), not auto. Without
+        // this, an auto-width absolutely-positioned box (left:50%, no
+        // right, centered only via the sibling transform) computes its
+        // shrink-to-fit width from a browser-internal availability
+        // calculation that doesn't know about the transform: it treats
+        // the space from `left` to the containing block's right edge as
+        // the budget, not the true centered width. That budget is
+        // symmetric-looking but content-width-DEPENDENT, so the long
+        // placeholder caption ("PLACEHOLDER CAPTION ONE", wider than the
+        // 140px photo) wrapped to two lines at narrow page widths and
+        // sat on one line at wide ones — a real discontinuity, not
+        // rounding noise, confirmed at ~154px vs ~172px card widths on
+        // either side of it. That's what made the visually-dominant
+        // photo square drift off the page's true center as the notebook
+        // resized: the card's own bounding box stayed correctly centered
+        // throughout, but its SIZE (and therefore where the photo sat
+        // inside it) wasn't stable. A fixed width makes the card the
+        // same size at every notebook size, full stop.
+        style={{ boxShadow: shadowFor(1), width: PHOTO_SIZE + 14 }}
       >
         {isPlaceholder || !src ? (
           <div

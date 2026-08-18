@@ -4,6 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { JetBrains_Mono } from "next/font/google";
+
+const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
+
 // Site-level only: Work, About, Contact. Deliberately does NOT list
 // individual projects or duplicate the /work index's sidebar — that
 // sidebar owns in-page navigation between projects, the top nav owns
@@ -12,9 +16,9 @@ import { useEffect, useState } from "react";
 // Contact is an in-page anchor on /about (#contact), not its own route —
 // see the isActive logic below, which only highlights real routes.
 const LINKS = [
-  { href: "/work", label: "Work" },
-  { href: "/about", label: "About" },
-  { href: "/about#contact", label: "Contact" },
+  { href: "/work", label: "work/" },
+  { href: "/about", label: "about/" },
+  { href: "/about#contact", label: "contact/" },
 ];
 
 /**
@@ -80,8 +84,8 @@ export function SiteNav() {
       aria-hidden={!visible}
     >
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4" aria-label="Primary">
-        <Link href="/" className="font-display text-sm font-bold tracking-tight text-ink">
-          Uijin Cho
+        <Link href="/" className={`${mono.className} text-sm font-bold tracking-tight text-ink`}>
+          ~uijincho
         </Link>
         <ul className="flex gap-6">
           {LINKS.map((l) => {
@@ -96,7 +100,7 @@ export function SiteNav() {
                 <Link
                   href={l.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`font-mono text-xs uppercase tracking-wide ${
+                  className={`font-mono text-xs tracking-wide ${
                     isActive ? "text-accent" : "text-ink-muted hover:text-ink"
                   }`}
                 >
