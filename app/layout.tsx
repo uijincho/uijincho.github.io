@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Inter, Newsreader, JetBrains_Mono } from "next/font/google";
+import { SiteNav } from "@/components/nav/SiteNav";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 // Display / headings only — weight 700, tight tracking applied via utility classes.
@@ -41,7 +43,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${inter.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SiteNav />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
