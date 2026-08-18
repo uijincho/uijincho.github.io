@@ -45,16 +45,24 @@ export function NotebookHero() {
   return (
     <section aria-label="Introduction" className="relative flex h-screen w-full items-center justify-center bg-[#e7dbc6] px-4">
       {/* The notebook object: dark cover, ~8px visible as a border via padding.
-          Max width capped at 520px (the spec's own reference size, not an
-          arbitrary choice) — the pull-out animation's fixed 74px offset
-          (HeroPhotoStack) needs to actually reach the page's right edge to
-          cross the gutter. Verified: at width > ~622px the resting card's
-          margin from the page edge exceeds 74px and the pull silently stops
-          short of the boundary — this cap keeps every supported viewport
-          width comfortably under that threshold. */}
+          Width scales with the viewport (min(92vw, 1100px)) but interior
+          content does NOT — fonts, photo dimensions, and all spacing inside
+          the pages stay in their fixed px/rem values regardless of how big
+          the notebook gets. Growing the notebook means more breathing room
+          around unchanged-size content, not bigger content.
+
+          Known trade-off, not an oversight: HeroPhotoStack's pull-out
+          offset is a fixed 74px (per spec, and per the instruction that
+          interior spacing stays fixed). At this larger width the page is
+          wide enough that 74px no longer reaches the gutter the way it did
+          at the old ~520px cap — the crossing effect is real at narrower
+          viewports (near the md breakpoint) and becomes a smaller fraction
+          of the page at wider ones. Not compensating for this by scaling
+          the pull distance, since that would itself be exactly the kind of
+          interior-content scaling this change rules out. */}
       <div
         className="relative bg-[#3b2a1f] p-2"
-        style={{ width: "clamp(380px, 38vw, 520px)", aspectRatio: "520 / 372" }}
+        style={{ width: "min(92vw, 1100px)", aspectRatio: "520 / 372" }}
       >
         <div className="grid h-full grid-cols-[1fr_2px_1fr]">
           {/* Left page: photo stack. position:relative makes this the
