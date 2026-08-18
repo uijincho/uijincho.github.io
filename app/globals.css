@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
 /*
- * Stage 1 placeholder theme. The full palette (base/raised/ink/ink-muted/
- * accent/support/rule), type scale, and shadow/rotation constants land in
- * Stage 3 (design system). This just wires up the four font families so
- * Tailwind's font-* utilities work end to end.
- *
  * --font-display (Archivo)   headings only
  * --font-sans    (Inter)     UI/labels/nav/card text — the default body font
  * --font-serif   (Newsreader) long-form MDX article body ONLY, never UI text
@@ -43,4 +38,16 @@ body {
   font-family: var(--font-sans);
   background-color: var(--color-base);
   color: var(--color-ink);
+}
+
+/*
+ * Focus states, site-wide. Plain CSS outline, deliberately NOT Tailwind's
+ * ring-* utilities (box-shadow based) — outline survives a Tailwind
+ * version change and never gets clipped by a parent's overflow:hidden.
+ * Applies to every interactive element automatically; components must not
+ * add their own ring-* classes or override this away.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
