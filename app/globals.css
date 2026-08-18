@@ -18,6 +18,29 @@
   --font-mono: var(--font-jetbrains-mono);
 }
 
+/*
+ * Palette. Ink is a warm brown-black, not neutral — never substitute #000 or
+ * gray anywhere derived from it. Accent (maroon) and support (brick) are both
+ * real accents, not accent+quiet-support, so the two tracks read as equal
+ * weight. There is no third neutral hue: anything that needs to recede uses
+ * --color-ink-muted. --color-rule is derived from --color-ink via color-mix,
+ * never a hardcoded gray, so a future ink change propagates to every hairline.
+ *
+ * Contrast against --color-base, verified: ink 14.9, muted 5.6, accent 11.5,
+ * support 5.4 — all pass WCAG AA for normal text. Do not lighten any of these.
+ */
+@theme {
+  --color-base: #f0ede6;
+  --color-raised: #f7f5ef;
+  --color-ink: #211812;
+  --color-ink-muted: #665c50;
+  --color-accent: #5e101e;
+  --color-support: #a0442a;
+  --color-rule: color-mix(in srgb, var(--color-ink) 15%, transparent);
+}
+
 body {
   font-family: var(--font-sans);
+  background-color: var(--color-base);
+  color: var(--color-ink);
 }
