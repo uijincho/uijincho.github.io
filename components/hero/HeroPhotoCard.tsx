@@ -1,14 +1,19 @@
 import Image from "next/image";
-import { resolveImage, PLACEHOLDER_LABEL } from "@/lib/design/images";
+import { PLACEHOLDER_LABEL } from "@/lib/design/placeholder-label";
 import { shadowFor } from "@/lib/design/light";
-import type { HeroPhoto } from "@/lib/design/hero-photos";
 import type { HeroStackOffset } from "@/lib/design/hero-stack";
 
 const PHOTO_SIZE = 140;
 
 interface HeroPhotoCardProps {
-  photo: HeroPhoto;
+  /** Pre-resolved server-side (see NotebookHero) — this component never touches fs itself, so it can live in the client-bundled HeroPhotoStack tree. */
+  src: string | null;
+  isPlaceholder: boolean;
+  alt: string;
+  caption: string;
   offset: HeroStackOffset;
+  /** True only for whichever card currently sits at depth 0 — applies the group-hover/group-focus-visible lift. */
+  isTop: boolean;
 }
 
 /**
@@ -18,35 +23,45 @@ interface HeroPhotoCardProps {
  * fails silently if missed:
  *
  * - Outer div: a pure positioning proxy. `transform` (translate + rotate)
- *   and `zIndex` are set here — in Pass 1 from the static HERO_STACK_OFFSETS
- *   config, in Pass 2 additionally from JS state during the pull-out. No
- *   visual styling of its own.
+ *   and `zIndex` come from `offset`, set by the parent HeroPhotoStack —
+ *   the resting depth position normally, the pull-out position while
+ *   this card is being cycled out. `transition-transform` (class-based)
+ *   animates changes to that inline-style transform smoothly, covering
+ *   both the pull-out and the re-lay reflow with one rule.
  * - Inner div: the actual visible card — cream frame, bottom-weighted
- *   padding, LIGHT-derived shadow, caption. Pass 2's CSS hover lift will
- *   target THIS element.
+ *   padding, LIGHT-derived shadow, caption. Only when `isTop` does this
+ *   element get the group-hover/group-focus-visible lift classes; the
+ *   "group" is the stack's <button> in HeroPhotoStack.
  *
  * Why the split matters: if the positional transform and the hover
  * transform both targeted the SAME element, the outer's inline
- * `style.transform` would always win over any class-based `:hover` rule —
- * inline style beats a class selector regardless of pseudo-class, with no
- * console error and correct-looking values in devtools (the CSS rule is
- * right there, it's just never applied). Two separate elements means two
- * independent `transform` properties — nothing to conflict with, since
- * the browser composes the outer's and inner's transforms naturally.
+ * `style.transform` would always win over any class-based `:hover`
+ * rule — inline style beats a class selector regardless of pseudo-class,
+ * with no console error and correct-looking values in devtools (the CSS
+ * rule is right there, it's just never applied). Two separate elements
+ * means two independent `transform` properties — nothing to conflict
+ * with, since the browser composes the outer's and inner's transforms
+ * naturally.
  */
-export function HeroPhotoCard({ photo, offset }: HeroPhotoCardProps) {
-  const { src, isPlaceholder } = resolveImage(photo.src);
-
+export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop }: HeroPhotoCardProps) {
   return (
     <div
-      className="absolute left-1/2 top-1/2"
+      aria-hidden="true"
+      className="absolute left-1/2 top-1/2 transition-transform duration-[210ms] ease-out motion-reduce:transition-none"
       style={{
         transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) rotate(${offset.rotate}deg)`,
         zIndex: offset.z,
       }}
     >
-      <div className="bg-raised pt-[7px] pr-[7px] pb-[21px] pl-[7px]" style={{ boxShadow: shadowFor(1) }}>
-        {isPlaceholder ? (
+      <div
+        className={`bg-raised pt-[7px] pr-[7px] pb-[21px] pl-[7px] transition-transform duration-150 motion-reduce:transition-none ${
+          isTop
+            ? "group-hover:-translate-y-[9px] group-hover:rotate-[-1.5deg] group-focus-visible:-translate-y-[9px] group-focus-visible:rotate-[-1.5deg]"
+            : ""
+        }`}
+        style={{ boxShadow: shadowFor(1) }}
+      >
+        {isPlaceholder || !src ? (
           <div
             className="flex items-center justify-center bg-base font-mono text-[10px] uppercase tracking-wide text-ink-muted"
             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
@@ -54,17 +69,9 @@ export function HeroPhotoCard({ photo, offset }: HeroPhotoCardProps) {
             {PLACEHOLDER_LABEL}
           </div>
         ) : (
-          <Image
-            src={src as string}
-            alt={photo.alt}
-            width={PHOTO_SIZE}
-            height={PHOTO_SIZE}
-            className="block object-cover"
-          />
+          <Image src={src} alt={alt} width={PHOTO_SIZE} height={PHOTO_SIZE} className="block object-cover" />
         )}
-        <p className="mt-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">
-          {photo.caption}
-        </p>
+        <p className="mt-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">{caption}</p>
       </div>
     </div>
   );

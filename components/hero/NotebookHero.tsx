@@ -1,7 +1,7 @@
 import { getProjectsByKind } from "@/lib/projects";
+import { resolveImage } from "@/lib/design/images";
 import { HERO_PHOTOS } from "@/lib/design/hero-photos";
-import { HERO_STACK_OFFSETS } from "@/lib/design/hero-stack";
-import { HeroPhotoCard } from "@/components/hero/HeroPhotoCard";
+import { HeroPhotoStack } from "@/components/hero/HeroPhotoStack";
 import { HandwrittenName } from "@/components/hero/HandwrittenName";
 import { TYPE } from "@/lib/design/type-scale";
 
@@ -13,29 +13,21 @@ import { TYPE } from "@/lib/design/type-scale";
  * conventional page section — that framing stops here and does not carry
  * into interior pages.
  *
- * PASS 1 (this): static layout only, zero interaction — no hover, no
- * click, no JS state. Pass 2 adds the hover lift and click-to-cycle
- * behavior on top of this same structure.
+ * PASS 2 (this): the interaction lives in HeroPhotoStack, a "use client"
+ * component — the only part of this hero that needs to be. This
+ * component (NotebookHero) stays a server component; it resolves the
+ * four photos against the filesystem here (resolveImage reads fs, which
+ * can't run in client-bundled code) and passes the plain resolved data
+ * down as props.
  *
- * Two things from the spec that fail silently if missed, both already
- * accounted for in this static structure so Pass 2 doesn't need to
- * restructure anything:
- *
- * 1. Two nested elements per card (see HeroPhotoCard's own doc comment)
- *    — outer div for the positional transform, inner div for Pass 2's
- *    hover transform. Same element for both would mean the outer's
- *    inline style silently wins over the CSS hover rule.
- * 2. No overflow:hidden anywhere on the pages. The left page has
- *    position:relative (a containing block for the cards' absolute
- *    positioning) but deliberately no z-index of its own, and the right
- *    page has no z-index either — neither creates its own stacking
- *    context, so the cards' explicit z-index (7-10, set per offset) is
- *    guaranteed to compare directly against the right page's content
- *    (which sits at the stacking-context default) rather than being
- *    trapped inside a page-local context. That's what lets Pass 2's
- *    74px pull carry a card visibly over the gutter and the right page
- *    instead of behind it. If clipping ever turns out to be needed, it
- *    goes on the notebook wrapper, never on either page.
+ * See HeroPhotoStack's own doc comment for exactly how the two
+ * required-explicit-check items from the spec are satisfied:
+ * 1. Two nested elements per card (HeroPhotoCard) so the positional
+ *    transform and the hover transform never target the same element.
+ * 2. No overflow:hidden anywhere, and the stack's <button> carries an
+ *    explicit, permanent z-index so it reliably outranks the right
+ *    page's content even once its own hover-triggered transform makes it
+ *    a stacking context.
  *
  * Desk (#e7dbc6) and cover (#3b2a1f) are intentional one-off colors
  * scoped to this component only — not added as global palette tokens in
@@ -45,30 +37,44 @@ import { TYPE } from "@/lib/design/type-scale";
 export function NotebookHero() {
   const softwareCount = getProjectsByKind("software").length;
   const researchCount = getProjectsByKind("research").length;
+  const resolvedPhotos = HERO_PHOTOS.map((photo) => {
+    const { src, isPlaceholder } = resolveImage(photo.src);
+    return { src, isPlaceholder, caption: photo.caption, alt: photo.alt };
+  });
 
   return (
     <section aria-label="Introduction" className="relative flex h-screen w-full items-center justify-center bg-[#e7dbc6] px-4">
-      {/* The notebook object: dark cover, ~8px visible as a border via padding */}
+      {/* The notebook object: dark cover, ~8px visible as a border via padding.
+          Max width capped at 520px (the spec's own reference size, not an
+          arbitrary choice) — the pull-out animation's fixed 74px offset
+          (HeroPhotoStack) needs to actually reach the page's right edge to
+          cross the gutter. Verified: at width > ~622px the resting card's
+          margin from the page edge exceeds 74px and the pull silently stops
+          short of the boundary — this cap keeps every supported viewport
+          width comfortably under that threshold. */}
       <div
         className="relative bg-[#3b2a1f] p-2"
-        style={{ width: "clamp(380px, 44vw, 720px)", aspectRatio: "520 / 372" }}
+        style={{ width: "clamp(380px, 38vw, 520px)", aspectRatio: "520 / 372" }}
       >
         <div className="grid h-full grid-cols-[1fr_2px_1fr]">
-          {/* Left page: photo stack, resting offsets only (Pass 1) */}
+          {/* Left page: photo stack. position:relative makes this the
+              containing block for the stack's absolute positioning — it
+              deliberately has no z-index of its own (stays auto), so it
+              never competes with the stack <button>'s explicit z-20. */}
           <div className="relative bg-raised">
-            {HERO_PHOTOS.map((photo, i) => (
-              <HeroPhotoCard key={photo.src} photo={photo} offset={HERO_STACK_OFFSETS[i % HERO_STACK_OFFSETS.length]} />
-            ))}
+            <HeroPhotoStack photos={resolvedPhotos} />
           </div>
 
           {/* Gutter / spine */}
           <div aria-hidden="true" style={{ background: "color-mix(in srgb, var(--color-ink) 17%, transparent)" }} />
 
-          {/* Right page: identity */}
+          {/* Right page: identity. No z-index here either — stays at the
+              stacking-context default, so the stack's z-20 (see
+              HeroPhotoStack) reliably renders above this during the pull. */}
           <div className="flex flex-col justify-center bg-raised px-6 py-6 sm:px-10">
             <p className={TYPE.meta}>Portfolio 2026</p>
             <HandwrittenName />
-            <div aria-hidden="true" className="mt-1 h-[3px] w-24 rounded-full bg-accent" />
+            <div aria-hidden="true" className="mt-1 w-24 rounded-full bg-accent" />
             <p className={`${TYPE.body} mt-4 text-ink`}>
               Software engineer and researcher building at the intersection of both.
             </p>
