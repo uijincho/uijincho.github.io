@@ -62,6 +62,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             mdxOptions: {
               rehypePlugins: [[rehypePrettyCode, { theme: "github-light", keepBackground: false }]],
             },
+            // next-mdx-remote/rsc defaults blockJS to true — a security
+            // guard that strips all {expression} JS from MDX, since the
+            // package is often used with untrusted/user-submitted content.
+            // Our content is first-party (this repo's own content/projects
+            // directory, authored by us), so components like <Figure
+            // number={1} /> need real JS expression attributes to work.
+            // Confirmed via a debug probe that number={1} silently became
+            // undefined with the default blockJS: true.
+            blockJS: false,
           }}
         />
       </div>

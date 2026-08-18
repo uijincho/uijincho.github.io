@@ -1,6 +1,11 @@
 import { Children, isValidElement, type ComponentProps } from "react";
 import { TYPE } from "@/lib/design/type-scale";
 import { FlatFrame } from "@/components/frames/FlatFrame";
+import { Figure } from "@/components/mdx/Figure";
+import { ImagePair } from "@/components/mdx/ImagePair";
+import { FullBleed } from "@/components/mdx/FullBleed";
+import { PullQuote } from "@/components/mdx/PullQuote";
+import { Callout } from "@/components/mdx/Callout";
 
 /**
  * Markdown always wraps a standalone `![]()` in a <p> (images are inline
@@ -60,9 +65,14 @@ export const mdxComponents = {
   code: (props: ComponentProps<"code">) => (
     <code className="rounded bg-raised px-1 py-0.5 font-mono text-[0.85em] text-ink" {...props} />
   ),
+  // Warm paper-toned background (--color-code), NOT a dark terminal theme —
+  // code should sit inside the palette, not fight it. rehype-pretty-code
+  // is configured with keepBackground: false so shiki's own theme
+  // background is dropped and this fills it instead; only the per-token
+  // text colors from the "github-light" theme survive.
   pre: (props: ComponentProps<"pre">) => (
     <pre
-      className="my-6 overflow-x-auto rounded border border-rule bg-raised p-4 font-mono text-sm [&>code]:bg-transparent [&>code]:p-0"
+      className="my-6 overflow-x-auto rounded border border-rule bg-code p-4 font-mono text-sm [&>code]:bg-transparent [&>code]:p-0"
       {...props}
     />
   ),
@@ -71,4 +81,13 @@ export const mdxComponents = {
     if (typeof src !== "string") return null;
     return <FlatFrame src={src} alt={alt ?? ""} width={800} height={500} fluid className="my-6" />;
   },
+
+  // Custom components authors use directly in MDX bodies — see each
+  // component's own file for its spec. Without these every project page
+  // is an undifferentiated wall of text.
+  Figure,
+  ImagePair,
+  FullBleed,
+  PullQuote,
+  Callout,
 };

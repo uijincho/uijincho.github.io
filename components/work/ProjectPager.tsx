@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Project } from "@/lib/projects";
 import { TYPE } from "@/lib/design/type-scale";
+import { KIND_LABEL, KIND_ACCENT_TEXT } from "@/lib/design/kind";
 
 export function ProjectPager({ prev, next }: { prev?: Project; next?: Project }) {
   if (!prev && !next) return null;
@@ -10,6 +11,9 @@ export function ProjectPager({ prev, next }: { prev?: Project; next?: Project })
       {prev ? (
         <Link href={`/work/${prev.slug}`} className="group flex flex-col">
           <span className={TYPE.meta}>← Previous</span>
+          <span className={`mt-2 font-mono text-xs uppercase tracking-wide ${KIND_ACCENT_TEXT[prev.kind]}`}>
+            {KIND_LABEL[prev.kind]}
+          </span>
           <span className="mt-1 font-display text-base font-bold tracking-[-0.02em] text-ink group-hover:underline">
             {prev.title}
           </span>
@@ -20,6 +24,9 @@ export function ProjectPager({ prev, next }: { prev?: Project; next?: Project })
       {next ? (
         <Link href={`/work/${next.slug}`} className="group flex flex-col items-end text-right">
           <span className={TYPE.meta}>Next →</span>
+          <span className={`mt-2 font-mono text-xs uppercase tracking-wide ${KIND_ACCENT_TEXT[next.kind]}`}>
+            {KIND_LABEL[next.kind]}
+          </span>
           <span className="mt-1 font-display text-base font-bold tracking-[-0.02em] text-ink group-hover:underline">
             {next.title}
           </span>

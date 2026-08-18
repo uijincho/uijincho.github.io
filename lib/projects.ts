@@ -138,6 +138,11 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
 let cache: Project[] | null = null;
 
 function loadAllProjects(): Project[] {
+  // NOTE: this in-memory cache is fine in production (generateStaticParams
+  // runs it once per `next build`) but means content/projects/*.mdx edits
+  // are NOT picked up by a long-running `next dev` process — .mdx files
+  // aren't part of the Turbopack module graph, so Fast Refresh doesn't
+  // invalidate this. Restart `next dev` after editing content files.
   if (cache) return cache;
 
   const files = fs.readdirSync(PROJECTS_DIR).filter((f) => f.endsWith(".mdx"));

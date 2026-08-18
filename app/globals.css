@@ -32,6 +32,13 @@
   --color-accent: #5e101e;
   --color-support: #a0442a;
   --color-rule: color-mix(in srgb, var(--color-ink) 15%, transparent);
+  /*
+   * Code block surface only (mdx-components.tsx `pre`). An explicit
+   * addition, not a drift from "no third neutral hue" — code needs to sit
+   * inside the warm-paper palette rather than fighting it with a dark
+   * terminal theme, and this specific value was specified directly.
+   */
+  --color-code: #eae6dc;
 }
 
 body {

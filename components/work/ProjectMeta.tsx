@@ -41,36 +41,31 @@ export function ProjectMeta({ project }: { project: Project }) {
 
       <div className="col-span-2 sm:col-span-3">
         <dt className={TYPE.meta}>Links</dt>
-        <dd className="mt-1 flex flex-wrap gap-4">
+        <dd className="mt-1 flex flex-wrap gap-6">
           {project.kind === "software" ? (
             <>
-              {project.links.repo && (
-                <a href={project.links.repo} className={`underline underline-offset-2 ${accentClass}`}>
-                  Repo
-                </a>
-              )}
-              {project.links.demo && (
-                <a href={project.links.demo} className={`underline underline-offset-2 ${accentClass}`}>
-                  Live demo
-                </a>
-              )}
+              <MetaLink href={project.links.repo} accentClass={accentClass} label="Repo" />
+              <MetaLink href={project.links.demo} accentClass={accentClass} label="Live demo" />
             </>
           ) : (
             <>
-              {project.links.paper && (
-                <a href={project.links.paper} className={`underline underline-offset-2 ${accentClass}`}>
-                  Paper
-                </a>
-              )}
-              {project.links.code && (
-                <a href={project.links.code} className={`underline underline-offset-2 ${accentClass}`}>
-                  Code
-                </a>
-              )}
+              <MetaLink href={project.links.paper} accentClass={accentClass} label="Paper" />
+              <MetaLink href={project.links.code} accentClass={accentClass} label="Code" />
             </>
           )}
         </dd>
       </div>
     </dl>
+  );
+}
+
+/** Mono uppercase, track color, ↗ suffix — the spec's link treatment. */
+function MetaLink({ href, accentClass, label }: { href?: string; accentClass: string; label: string }) {
+  if (!href) return null;
+  return (
+    <a href={href} className={`inline-flex items-center gap-1 font-mono text-xs uppercase tracking-wide ${accentClass}`}>
+      {label}
+      <span aria-hidden="true">↗</span>
+    </a>
   );
 }
