@@ -1,7 +1,9 @@
 import { getProjectsByKind } from "@/lib/projects";
 import { resolveImage } from "@/lib/design/images";
 import { HERO_PHOTOS } from "@/lib/design/hero-photos";
+import { HERO_STICKERS } from "@/lib/design/hero-stickers";
 import { HeroPhotoStack } from "@/components/hero/HeroPhotoStack";
+import { HeroSticker } from "@/components/hero/HeroSticker";
 import { HandwrittenName } from "@/components/hero/HandwrittenName";
 import { TYPE } from "@/lib/design/type-scale";
 
@@ -41,6 +43,15 @@ export function NotebookHero() {
     const { src, isPlaceholder } = resolveImage(photo.src);
     return { src, isPlaceholder, caption: photo.caption, alt: photo.alt };
   });
+  // Missing sticker files render nothing at all (no placeholder box, no
+  // broken-image icon) — filtered out here, server-side, rather than
+  // handled in the client component, so HeroSticker never has to know
+  // about the "missing" case.
+  const resolvedStickers = HERO_STICKERS.flatMap((sticker) => {
+    const { src, isPlaceholder } = resolveImage(sticker.src);
+    if (isPlaceholder || !src) return [];
+    return [{ sticker, src }];
+  });
 
   return (
     <section aria-label="Introduction" className="relative flex h-screen w-full items-center justify-center bg-[#e7dbc6] px-4">
@@ -74,6 +85,14 @@ export function NotebookHero() {
               never competes with the stack <button>'s explicit z-20. */}
           <div className="relative bg-raised">
             <HeroPhotoStack photos={resolvedPhotos} />
+            {/* Hobby stickers. Positioned in the bands above/below the
+                stack's ~190x166 hit area, never overlapping it — an
+                interactive sticker over the stack's <button> would either
+                swallow its clicks or have its own swallowed, and there's
+                no CSS fix once both need pointer events. */}
+            {resolvedStickers.map(({ sticker, src }) => (
+              <HeroSticker key={sticker.src} sticker={sticker} src={src} />
+            ))}
           </div>
 
           {/* Gutter / spine */}
@@ -90,7 +109,7 @@ export function NotebookHero() {
               Software engineer and researcher building at the intersection of both.
             </p>
             <div className="mt-6 border-t border-rule pt-4">
-              {/* change to link }
+              {/* change to link jump to research and software sections */}
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-xs uppercase tracking-wide text-accent">Software</span>
                 <span className="font-mono text-xs text-ink-muted">&gt;</span>

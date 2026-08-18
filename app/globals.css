@@ -72,3 +72,76 @@ body {
     display: none;
   }
 }
+
+/*
+ * ~uijincho identity mark typing effect (components/hero/HandwrittenName.tsx).
+ * Purely decorative — the <h1> always holds the real text separately via a
+ * sr-only span; this only animates the *visible* width of an aria-hidden
+ * copy, never textContent. steps(9) and the 9ch widths below are
+ * intentionally hardcoded to the fixed 9-character "~uijincho" string, not
+ * derived from it — a monospace font (JetBrains Mono) makes each step
+ * exactly one character wide.
+ *
+ * Loops on a fixed 15s cycle, purely via CSS (no JS re-trigger): the first
+ * 3% of the cycle (450ms) plays the steps(9) reveal, per-keyframe
+ * `animation-timing-function` scopes that stepping to just that segment,
+ * then width holds at 9ch for the rest of the cycle until it snaps back to
+ * 0 and retypes.
+ */
+@keyframes identity-typewriter {
+  0% {
+    width: 0;
+    animation-timing-function: steps(9, end);
+  }
+  3%,
+  100% {
+    width: 9ch;
+  }
+}
+
+/* Abrupt on/off within each half of the cycle, not a fade — reads as a
+   terminal cursor, not a pulsing dot. ~530ms on, ~530ms off. */
+@keyframes identity-cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.identity-typewriter {
+  animation: identity-typewriter 15s infinite;
+}
+
+.identity-cursor {
+  animation: identity-cursor-blink 1060ms steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .identity-typewriter {
+    width: 9ch;
+    animation: none;
+  }
+
+  .identity-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/*
+ * Hero sticker tooltip Escape-dismiss (components/hero/HeroSticker.tsx).
+ * Tooltip show/hide is otherwise pure CSS (group-hover/focus-visible) —
+ * this is the one thing CSS pseudo-classes can't do, respond to a
+ * keypress, which WCAG 1.4.13 needs. A window-level keydown handler sets
+ * data-dismissed on the wrapper when Escape is pressed while it's
+ * hovered/focused; this rule force-hides the tooltip when that's set,
+ * overriding the hover/focus-visible opacity rules regardless of
+ * stylesheet order. Resets on mouseleave/blur.
+ */
+.hero-sticker[data-dismissed="true"] [role="tooltip"] {
+  opacity: 0 !important;
+}
