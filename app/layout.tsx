@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Archivo, Newsreader, JetBrains_Mono } from "next/font/google";
+import { Archivo, Inter, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display / headings — weight 700, tight tracking applied via utility classes.
+// Display / headings only — weight 700, tight tracking applied via utility classes.
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   weight: ["500", "700"],
 });
 
-// Body / long-form prose — carries research writeups.
+// UI / labels / summaries / nav / card text — the default body sans.
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+// Long-form article body INSIDE MDX ONLY — not for interface text.
+// Kept as its own token (--font-serif) so it can't drift into UI copy.
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
@@ -31,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${inter.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

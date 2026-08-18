@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
 /*
- * Stage 1 placeholder theme. The full palette (paper/ink/rust/olive/rule),
- * type scale, and shadow/rotation constants land in Stage 3 (design system).
- * This just wires up the three core font families so Tailwind's font-*
- * utilities work end to end.
+ * Stage 1 placeholder theme. The full palette (base/raised/ink/ink-muted/
+ * accent/support/rule), type scale, and shadow/rotation constants land in
+ * Stage 3 (design system). This just wires up the four font families so
+ * Tailwind's font-* utilities work end to end.
+ *
+ * --font-display (Archivo)   headings only
+ * --font-sans    (Inter)     UI/labels/nav/card text — the default body font
+ * --font-serif   (Newsreader) long-form MDX article body ONLY, never UI text
+ * --font-mono    (JetBrains Mono) meta/labels/tags/index numbers
  */
 @theme inline {
-  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-inter);
   --font-serif: var(--font-newsreader);
   --font-mono: var(--font-jetbrains-mono);
 }
