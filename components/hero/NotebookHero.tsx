@@ -86,10 +86,14 @@ export function NotebookHero() {
           <div className="relative bg-raised">
             <HeroPhotoStack photos={resolvedPhotos} />
             {/* Hobby stickers. Positioned in the bands above/below the
-                stack's ~190x166 hit area, never overlapping it — an
-                interactive sticker over the stack's <button> would either
-                swallow its clicks or have its own swallowed, and there's
-                no CSS fix once both need pointer events. */}
+                stack's ~200x206 hit area (HeroPhotoStack's STACK_HIT_*),
+                never overlapping it — an interactive sticker over the
+                stack's <button> would either swallow its clicks or have
+                its own swallowed, and there's no CSS fix once both need
+                pointer events. That hit area used to be the button's
+                actual size too (`inset-0`, the full left page) — fixed to
+                match this comment's original intent rather than the
+                comment matching the code. */}
             {resolvedStickers.map(({ sticker, src }) => (
               <HeroSticker key={sticker.src} sticker={sticker} src={src} />
             ))}

@@ -82,12 +82,27 @@ body {
  * derived from it — a monospace font (JetBrains Mono) makes each step
  * exactly one character wide.
  *
- * Loops on a fixed 15s cycle, purely via CSS (no JS re-trigger): the first
- * 3% of the cycle (450ms) plays the steps(9) reveal, per-keyframe
+ * Loops on a --identity-cycle cycle (default 15s, set on the <h1>'s own
+ * `.identity-mark` class below), purely via CSS (no JS re-trigger): the
+ * first 3% of the cycle plays the steps(9) reveal, per-keyframe
  * `animation-timing-function` scopes that stepping to just that segment,
  * then width holds at 9ch for the rest of the cycle until it snaps back to
  * 0 and retypes.
+ *
+ * The cursor's blink duration (further down) is derived from this SAME
+ * variable rather than its own separately-tuned literal — two independent
+ * animation durations with no common factor drift out of phase with each
+ * other over repeated loops, which is exactly what previously let the
+ * cursor blink off mid-reveal on some (not all) retypes: 15s and a fixed
+ * 1060ms blink share no clean multiple, so the cursor's blink-off moment
+ * landed at a different point in the reveal window every cycle, including
+ * inside it. Tie both to one variable and that class of bug can't recur,
+ * including whenever this cycle length itself gets tuned.
  */
+.identity-mark {
+  --identity-cycle: 15s;
+}
+
 @keyframes identity-typewriter {
   0% {
     width: 0;
@@ -99,8 +114,19 @@ body {
   }
 }
 
-/* Abrupt on/off within each half of the cycle, not a fade — reads as a
-   terminal cursor, not a pulsing dot. ~530ms on, ~530ms off. */
+/*
+ * Abrupt on/off within each half of the cycle, not a fade — reads as a
+ * terminal cursor, not a pulsing dot. Its own duration (set below, on
+ * .identity-cursor) is calc(--identity-cycle / 15), not a fixed ms value —
+ * an exact divisor of the typing loop, so it always completes a whole
+ * number of blinks (15) per loop and resets to phase 0 exactly when the
+ * next retype starts, every time, at any --identity-cycle. Its "on" half
+ * (0%-49% here = 49% of ITS duration = --identity-cycle * 49/(15*100) ≈
+ * 3.267% of the full cycle) is arithmetically guaranteed to outlast the
+ * typewriter's 3%-of-cycle reveal above (3.267% > 3%, always, regardless
+ * of --identity-cycle's value) — the cursor cannot blink off before a
+ * retype finishes.
+ */
 @keyframes identity-cursor-blink {
   0%,
   49% {
@@ -113,11 +139,11 @@ body {
 }
 
 .identity-typewriter {
-  animation: identity-typewriter 15s infinite;
+  animation: identity-typewriter var(--identity-cycle) infinite;
 }
 
 .identity-cursor {
-  animation: identity-cursor-blink 1060ms steps(1, end) infinite;
+  animation: identity-cursor-blink calc(var(--identity-cycle) / 15) steps(1, end) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

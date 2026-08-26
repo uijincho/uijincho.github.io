@@ -18,7 +18,10 @@ export function MobileHeroTodo() {
   return (
     <section aria-label="Introduction" className="flex flex-col items-center bg-base px-6 py-16 text-center">
       <p className={TYPE.meta}>Portfolio 2026</p>
-      <HandwrittenName />
+      {/* Not the page's h1 — NotebookHero (rendered alongside this,
+          toggled purely by CSS, see HandwrittenName's `as` prop doc)
+          already is. Same visual identity mark, not a second heading. */}
+      <HandwrittenName as="p" />
       <p className={`${TYPE.body} mt-4 max-w-[40ch] text-ink`}>
         Software engineer and researcher building at the intersection of both.
       </p>

@@ -76,7 +76,7 @@ export function SiteNav() {
         isLanding
           ? [
               "fixed top-0 inset-x-0 z-50 border-b border-rule bg-base/90 backdrop-blur",
-              "transition-[transform,opacity] duration-300 motion-reduce:transition-none",
+              "transition-[transform,opacity] duration-500 motion-reduce:transition-none",
               visible ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0",
             ].join(" ")
           : "sticky top-0 inset-x-0 z-50 border-b border-rule bg-base/90 backdrop-blur"

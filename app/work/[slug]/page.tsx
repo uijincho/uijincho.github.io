@@ -8,6 +8,7 @@ import { KIND_LABEL, KIND_ACCENT_TEXT } from "@/lib/design/kind";
 import { ProjectMeta } from "@/components/work/ProjectMeta";
 import { ProjectPager } from "@/components/work/ProjectPager";
 import { mdxComponents } from "@/components/work/mdx-components";
+import { SITE_URL } from "@/lib/site";
 
 export function generateStaticParams() {
   return getAllProjects().map((p) => ({ slug: p.slug }));
@@ -22,12 +23,19 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug);
   if (!project) return {};
 
+  // Short title, not "X — Uijin Cho" — the root layout's title.template
+  // appends the suffix once, centrally (see app/layout.tsx). thumbnails[0]
+  // is a site-relative path; it resolves against metadataBase (also set
+  // in the root layout) rather than needing an absolute URL here.
   return {
-    title: `${project.title} — Uijin Cho`,
+    title: project.title,
     description: project.summary,
+    alternates: { canonical: `${SITE_URL}/work/${project.slug}` },
     openGraph: {
       title: project.title,
       description: project.summary,
+      url: `${SITE_URL}/work/${project.slug}`,
+      type: "article",
       images: [project.thumbnails[0]],
     },
   };

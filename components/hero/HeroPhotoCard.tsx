@@ -14,6 +14,16 @@ interface HeroPhotoCardProps {
   offset: HeroStackOffset;
   /** True only for whichever card currently sits at depth 0 — applies the group-hover/group-focus-visible lift. */
   isTop: boolean;
+  /**
+   * All four cards render above the fold on page load (stacked, not
+   * conditionally mounted) — one of them is this page's LCP element.
+   * Without `priority`, next/image lazy-loads by default and Lighthouse
+   * flags an LCP image being lazy-loaded regardless of it already being in
+   * the initial viewport. HeroPhotoStack passes this as true for every
+   * card it renders; defaults false only so this prop is safe to omit for
+   * any future non-hero usage of this component.
+   */
+  priority?: boolean;
 }
 
 /**
@@ -43,7 +53,7 @@ interface HeroPhotoCardProps {
  * with, since the browser composes the outer's and inner's transforms
  * naturally.
  */
-export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop }: HeroPhotoCardProps) {
+export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop, priority = false }: HeroPhotoCardProps) {
   return (
     <div
       aria-hidden="true"
@@ -87,7 +97,14 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop 
             {PLACEHOLDER_LABEL}
           </div>
         ) : (
-          <Image src={src} alt={alt} width={PHOTO_SIZE} height={PHOTO_SIZE} className="block object-cover" />
+          <Image
+            src={src}
+            alt={alt}
+            width={PHOTO_SIZE}
+            height={PHOTO_SIZE}
+            priority={priority}
+            className="block object-cover"
+          />
         )}
         <p className="mt-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">{caption}</p>
       </div>
