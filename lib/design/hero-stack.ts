@@ -17,8 +17,8 @@ export interface HeroStackOffset {
  * of which photo is currently in that slot.
  */
 export const HERO_STACK_OFFSETS: HeroStackOffset[] = [
-  { x: 0, y: 0, rotate: -2.5, z: 10 },
-  { x: 7, y: 5, rotate: 1.5, z: 9 },
-  { x: 14, y: 10, rotate: -1, z: 8 },
-  { x: 21, y: 15, rotate: 2.5, z: 7 },
+  { x: 15, y: 0, rotate: 3, z: 10 },
+  { x: 7, y: 5, rotate: -1.5, z: 9 },
+  { x: 14, y: 10, rotate: 1, z: 8 },
+  { x: 21, y: 15, rotate: -2.5, z: 7 },
 ];

@@ -76,7 +76,7 @@ export function NotebookHero() {
           interior-content scaling this change rules out. */}
       <div
         className="relative bg-[#3b2a1f] p-2"
-        style={{ width: "min(66vw, 850px)", aspectRatio: "520 / 372" }}
+        style={{ width: "min(72vw, 850px)", aspectRatio: "520 / 372" }}
       >
         <div className="grid h-full grid-cols-[1fr_2px_1fr]">
           {/* Left page: photo stack. position:relative makes this the
@@ -110,7 +110,7 @@ export function NotebookHero() {
             <HandwrittenName />
             <div aria-hidden="true" className="mt-1 w-24 rounded-full bg-accent" />
             <p className={`${TYPE.body} mt-4 text-ink`}>
-              Software engineer and researcher building at the intersection of both.
+              applied math + computer science @ Brown
             </p>
             <div className="mt-6 border-t border-rule pt-4">
               {/* change to link jump to research and software sections */}

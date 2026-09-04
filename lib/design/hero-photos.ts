@@ -13,23 +13,23 @@ export interface HeroPhoto {
  */
 export const HERO_PHOTOS: HeroPhoto[] = [
   {
-    src: "/images/hero/photo-1.jpg",
-    caption: "PLACEHOLDER CAPTION ONE",
-    alt: "PLACEHOLDER — replace with a real photo",
+    src: "/images/hero/photo-1.png",
+    caption: "hi, i'm Jin!",
+    alt: "hi, i'm Jin!",
   },
   {
     src: "/images/hero/photo-2.jpg",
-    caption: "PLACEHOLDER CAPTION TWO",
-    alt: "PLACEHOLDER — replace with a real photo",
+    caption: "prev swe intern @ GoDaddy",
+    alt: "prev swe intern @ GoDaddy",
   },
   {
-    src: "/images/hero/photo-3.jpg",
-    caption: "PLACEHOLDER CAPTION THREE",
-    alt: "PLACEHOLDER — replace with a real photo",
+    src: "/images/hero/photo-3.png",
+    caption: "blu's hacks 2024",
+    alt: "blu's hacks 2024",
   },
   {
-    src: "/images/hero/photo-4.jpg",
-    caption: "PLACEHOLDER CAPTION FOUR",
-    alt: "PLACEHOLDER — replace with a real photo",
+    src: "/images/hero/photo-4.png",
+    caption: "@brownubadminton",
+    alt: "@brownubadminton",
   },
 ];

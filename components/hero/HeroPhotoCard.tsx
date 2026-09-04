@@ -3,7 +3,7 @@ import { PLACEHOLDER_LABEL } from "@/lib/design/placeholder-label";
 import { shadowFor } from "@/lib/design/light";
 import type { HeroStackOffset } from "@/lib/design/hero-stack";
 
-const PHOTO_SIZE = 140;
+const PHOTO_SIZE = 180;
 
 interface HeroPhotoCardProps {
   /** Pre-resolved server-side (see NotebookHero) — this component never touches fs itself, so it can live in the client-bundled HeroPhotoStack tree. */
@@ -91,7 +91,7 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop,
       >
         {isPlaceholder || !src ? (
           <div
-            className="flex items-center justify-center bg-base font-mono text-[10px] uppercase tracking-wide text-ink-muted"
+            className="flex items-center justify-center bg-base font-mono text-[10px] tracking-wide text-ink-muted"
             style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
           >
             {PLACEHOLDER_LABEL}
@@ -106,7 +106,7 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop,
             className="block object-cover"
           />
         )}
-        <p className="mt-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">{caption}</p>
+        <p className="mt-1 text-center font-mono text-[11px] tracking-wide text-ink-muted">{caption}</p>
       </div>
     </div>
   );
