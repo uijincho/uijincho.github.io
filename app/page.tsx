@@ -26,20 +26,39 @@ export default function Home() {
     <>
       {/* Static, locally-defined JSON-LD (see personJsonLd above) — not user input. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
-      {/* Zone 1: the notebook spread, desktop/tablet (md+). Do not attempt
-          to scale this down for mobile — see MobileHeroTodo. */}
-      <div className="hidden md:block">
-        <NotebookHero />
-      </div>
-      <div className="md:hidden">
-        <MobileHeroTodo />
-      </div>
+      {/* Wrapped in <main> for two reasons: it's the landmark this route
+          was missing (every other route has exactly one), and — the
+          reason this matters here specifically — it's what makes
+          <WorkIndexBody />'s width/centering match /work exactly.
+          <body> is `flex flex-col` (app/layout.tsx); without this
+          wrapper, WorkIndexBody's own `mx-auto max-w-[90rem]` div was a
+          *direct* flex item of that column flex container, and a flex
+          item with auto cross-axis margins doesn't stretch to fill the
+          line the way a plain block element does — it shrinks to its
+          content width instead (observed ~840px, not the intended
+          1440px-capped-and-centered box), so it rendered narrower and
+          differently-positioned than the exact same component on /work,
+          where it's nested inside <main> (a plain block, not a flex
+          item) and ordinary block-centering math applies. Wrapping both
+          routes' content in <main> the same way makes WorkIndexBody a
+          non-flex-item block child in both places — same containing
+          block, same box-model math, same rendered width and position. */}
+      <main>
+        {/* Zone 1: the notebook spread, desktop/tablet (md+). Do not attempt
+            to scale this down for mobile — see MobileHeroTodo. */}
+        <div className="hidden md:block">
+          <NotebookHero />
+        </div>
+        <div className="md:hidden">
+          <MobileHeroTodo />
+        </div>
 
-      {/* Zone 2: the hero scrolls directly into the full /work index — no
-          separate navigation needed. Also what gives the page real
-          height below the hero, so #hero-sentinel actually leaves the
-          viewport and the SiteNav reveal fires. */}
-      <WorkIndexBody />
+        {/* Zone 2: the hero scrolls directly into the full /work index — no
+            separate navigation needed. Also what gives the page real
+            height below the hero, so #hero-sentinel actually leaves the
+            viewport and the SiteNav reveal fires. */}
+        <WorkIndexBody />
+      </main>
     </>
   );
 }

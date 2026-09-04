@@ -21,9 +21,11 @@ interface ProjectFrontmatterBase {
   role: string;
   timeline: string;
   tags: string[];
-  // Two images per project — the /work index shows both. See Stage 2 note
-  // in the build prompt: this replaced a singular `thumbnail: string` field.
-  thumbnails: [string, string];
+  // One image per project. Reverted from a `thumbnails: [string, string]`
+  // tuple (Stage 2) back to this original singular field — see the /work
+  // index layout, which now shows a single image beside each entry
+  // instead of two thumbnails below it.
+  thumbnail: string;
   featured: boolean;
   links: ProjectLinksBase;
 }
@@ -75,6 +77,7 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
     ["role", isNonEmptyString],
     ["timeline", isNonEmptyString],
     ["tags", isStringArray],
+    ["thumbnail", isNonEmptyString],
     ["featured", (v) => typeof v === "boolean"],
   ];
 
@@ -82,17 +85,6 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
     if (!check(data[key])) {
       throw new ProjectValidationError(file, `missing or malformed "${key}"`);
     }
-  }
-
-  if (
-    !Array.isArray(data.thumbnails) ||
-    data.thumbnails.length !== 2 ||
-    !data.thumbnails.every((t) => typeof t === "string" && t.length > 0)
-  ) {
-    throw new ProjectValidationError(
-      file,
-      `"thumbnails" must be a tuple of exactly two non-empty strings, got ${JSON.stringify(data.thumbnails)}`
-    );
   }
 
   if (data.kind !== "software" && data.kind !== "research") {
@@ -114,7 +106,7 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
     role: data.role as string,
     timeline: data.timeline as string,
     tags: data.tags as string[],
-    thumbnails: data.thumbnails as [string, string],
+    thumbnail: data.thumbnail as string,
     featured: data.featured as boolean,
     links: links as ProjectLinksBase,
   };

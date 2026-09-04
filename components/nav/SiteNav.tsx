@@ -16,7 +16,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
 // Contact is an in-page anchor on /about (#contact), not its own route —
 // see the isActive logic below, which only highlights real routes.
 const LINKS = [
-  { href: "/work", label: "work/" },
+  { href: "/#section-software", label: "work/" },
   { href: "/about", label: "about/" },
   { href: "/about#contact", label: "contact/" },
 ];

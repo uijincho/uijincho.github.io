@@ -13,16 +13,16 @@ export function ProjectMeta({ project }: { project: Project }) {
   return (
     <dl className="grid grid-cols-2 gap-x-8 gap-y-4 border-y border-rule py-6 sm:grid-cols-3">
       <div>
-        <dt className={TYPE.meta}>Role</dt>
-        <dd className="mt-1 font-sans text-ink">{project.role}</dd>
-      </div>
-      <div>
         <dt className={TYPE.meta}>Timeline</dt>
         <dd className="mt-1 font-sans text-ink">{project.timeline}</dd>
       </div>
 
       {project.kind === "software" ? (
-        <div>
+        // col-span-2 of the 3-column sm+ grid = 2/3 width, freed up by
+        // dropping Role above (Timeline takes the remaining 1/3). Also
+        // full-width on the 2-column mobile grid, which reads fine for a
+        // comma-joined stack list.
+        <div className="col-span-2">
           <dt className={TYPE.meta}>Stack</dt>
           <dd className="mt-1 font-sans text-ink">{project.stack.join(", ")}</dd>
         </div>
