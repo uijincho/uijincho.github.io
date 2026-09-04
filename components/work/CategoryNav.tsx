@@ -10,7 +10,9 @@ import { TYPE } from "@/lib/design/type-scale";
 export function CategoryNav({ kind, projects }: { kind: ProjectKind; projects: Project[] }) {
   return (
     <nav aria-label={`${KIND_LABEL[kind]} projects`}>
-      <h2 className={`${TYPE.meta} ${KIND_ACCENT_TEXT[kind]}`}>{KIND_LABEL[kind]}</h2>
+      <a href={`#section-${kind}`} className={`${TYPE.meta} ${KIND_ACCENT_TEXT[kind]} hover:text-ink`}>
+        <h2 className="inline">{KIND_LABEL[kind]}</h2>
+      </a>
       <ol className="mt-3 flex flex-col gap-2">
         {projects.map((p, i) => (
           <li key={p.slug}>

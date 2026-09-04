@@ -1,3 +1,5 @@
+import Image from "next/image";
+import type { CSSProperties } from "react";
 import { getProjectsByKind } from "@/lib/projects";
 import { resolveImage } from "@/lib/design/images";
 import { HERO_PHOTOS } from "@/lib/design/hero-photos";
@@ -34,11 +36,29 @@ import { TYPE } from "@/lib/design/type-scale";
  * Desk (#e7dbc6) and cover (#3b2a1f) are intentional one-off colors
  * scoped to this component only — not added as global palette tokens in
  * globals.css, since they have exactly one consumer (this physical-object
- * metaphor) and aren't meant to be reused as UI colors elsewhere.
+ * metaphor) and aren't meant to be reused as UI colors elsewhere. Desk is
+ * exposed as a LOCAL custom property (--color-desk, set via inline style
+ * below) rather than a literal repeated in two places, since the desk zone
+ * is TWO stacked layers that both need it: a full-bleed flat-color base,
+ * then the photo on top of it with .hero-desk-mask (globals.css) applied
+ * directly to the <img> — mask-image erodes the photo's own alpha toward
+ * the bottom of the hero, letting the flat --color-desk layer beneath
+ * show through there, while the left/right/top edges stay at full photo
+ * opacity (a linear, bottom-only fade, not a vignette on all four sides).
+ * See that class's own comment for why the mask lives on the <img>
+ * itself. Both layers sit at -z-10 — behind the notebook
+ * (position:relative, z-index:auto) and the #hero-sentinel marker,
+ * without touching either's own z-index. Purely an edge treatment within
+ * the existing desk zone: doesn't change the section's height or bleed
+ * into the page below.
  */
 export function NotebookHero() {
   const softwareCount = getProjectsByKind("software").length;
   const researchCount = getProjectsByKind("research").length;
+  // Missing file → skip the photo layer entirely (flat --color-desk fill
+  // still renders underneath), same "render nothing, no broken-image
+  // icon" convention as the stickers below.
+  const deskPhoto = resolveImage("/images/hero/desk-bg.jpg");
   const resolvedPhotos = HERO_PHOTOS.map((photo) => {
     const { src, isPlaceholder } = resolveImage(photo.src);
     return { src, isPlaceholder, caption: photo.caption, alt: photo.alt };
@@ -54,7 +74,34 @@ export function NotebookHero() {
   });
 
   return (
-    <section aria-label="Introduction" className="relative flex h-screen w-full items-center justify-center bg-[#e7dbc6] px-4">
+    <section
+      aria-label="Introduction"
+      className="relative flex h-screen w-full items-center justify-center px-4"
+      style={{ "--color-desk": "#f0ede6" } as CSSProperties}
+    >
+      {/* Desk zone, two stacked layers, both behind the notebook (-z-10):
+          flat --color-desk fill full-bleed, then the photo on top of it
+          with .hero-desk-mask (globals.css) applied directly to the
+          <img> — a linear mask-image that fades the photo's own alpha
+          toward the bottom of the hero only, so the flat color shows
+          through there while the left/right/top edges stay full-opacity
+          photo. The wrapping div is inset-0 across the full hero section
+          (not just the photo's visible extent), so the mask has nowhere
+          to clip before its gradient finishes. */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[var(--color-desk)]" />
+      {deskPhoto.src && (
+        <div aria-hidden="true" className="absolute inset-0 -z-10">
+          <Image
+            src={deskPhoto.src}
+            alt=""
+            fill
+            priority
+            sizes="1600px"
+            className="hero-desk-mask object-cover"
+          />
+        </div>
+      )}
+
       {/* The notebook object: dark cover, ~8px visible as a border via padding.
           Width scales with the viewport (min(66vw, 850px), scaled down from
           an earlier min(92vw, 1100px) pass that read too large — desk
@@ -113,15 +160,18 @@ export function NotebookHero() {
               applied math + computer science @ Brown
             </p>
             <div className="mt-6 border-t border-rule pt-4">
-              {/* change to link jump to research and software sections */}
-              <div className="flex items-baseline justify-between">
-                <span className="font-mono text-xs uppercase tracking-wide text-accent">Software</span>
+              <a href="#section-software" className="group flex items-baseline justify-between">
+                <span className="font-mono text-xs uppercase tracking-wide text-accent group-hover:underline">
+                  Software
+                </span>
                 <span className="font-mono text-xs text-ink-muted">&gt;</span>
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <span className="font-mono text-xs uppercase tracking-wide text-support">Research</span>
+              </a>
+              <a href="#section-research" className="group mt-2 flex items-baseline justify-between">
+                <span className="font-mono text-xs uppercase tracking-wide text-support group-hover:underline">
+                  Research
+                </span>
                 <span className="font-mono text-xs text-ink-muted">&gt;</span>
-              </div>
+              </a>
             </div>
             <p className="mt-8 font-mono text-[11px] uppercase tracking-wide text-ink-muted">Scroll to turn the page</p>
           </div>

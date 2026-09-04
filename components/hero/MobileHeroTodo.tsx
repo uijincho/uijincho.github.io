@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getProjectsByKind } from "@/lib/projects";
 import { HandwrittenName } from "@/components/hero/HandwrittenName";
 import { TYPE } from "@/lib/design/type-scale";
@@ -26,12 +25,12 @@ export function MobileHeroTodo() {
         Software engineer and researcher building at the intersection of both.
       </p>
       <div className="mt-8 flex gap-6">
-        <Link href="/work" className="font-mono text-xs uppercase tracking-wide text-accent">
+        <a href="#section-software" className="font-mono text-xs uppercase tracking-wide text-accent">
           Software ({softwareCount})
-        </Link>
-        <Link href="/work" className="font-mono text-xs uppercase tracking-wide text-support">
+        </a>
+        <a href="#section-research" className="font-mono text-xs uppercase tracking-wide text-support">
           Research ({researchCount})
-        </Link>
+        </a>
       </div>
     </section>
   );

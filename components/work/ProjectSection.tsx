@@ -21,7 +21,7 @@ export function ProjectSection({ kind, projects }: { kind: ProjectKind; projects
 
   return (
     <section data-kind={kind} aria-labelledby={headingId}>
-      <h2 id={headingId} className={`${TYPE.meta} ${KIND_ACCENT_TEXT[kind]}`}>
+      <h2 id={headingId} className={`scroll-mt-24 ${TYPE.meta} ${KIND_ACCENT_TEXT[kind]}`}>
         {KIND_LABEL[kind]}
       </h2>
       <ol className="mt-6 flex flex-col gap-16">

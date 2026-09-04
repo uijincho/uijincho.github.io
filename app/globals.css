@@ -171,3 +171,40 @@ body {
 .hero-sticker[data-dismissed="true"] [role="tooltip"] {
   opacity: 0 !important;
 }
+
+/*
+ * Desk zone background photo fade (components/hero/NotebookHero.tsx).
+ * mask-image on the photo's own <img> (via next/image's `className`) —
+ * erodes the photo's alpha directly so the flat --color-desk layer
+ * beneath shows through where it fades. One mask, one photo layer; no
+ * separate overlay div stacked on top of it.
+ *
+ * Linear, not radial: fades only toward the BOTTOM of the hero. Left,
+ * right, and top stay at full opacity — `to bottom` only varies alpha
+ * along the y-axis, so it cannot touch the left/right edges regardless
+ * of the hero's aspect ratio. (An earlier radial-ellipse version faded
+ * on all four sides — replaced outright, not layered under this.)
+ *
+ * Earlier attempts at mask-image on this same <img> hit a real Chromium
+ * issue, but a RADIAL-gradient-specific one: confirmed by live-mutating
+ * an already-loaded page's mask value repeatedly (so image load time
+ * wasn't a confound) that a radial-gradient mask silently doesn't fade
+ * at all once either ellipse radius exceeds 50% of the box's matching
+ * dimension. That's a property of radial-gradient's own geometry
+ * (its 100% stop sits `radius` away from center, so a radius >=50% of a
+ * dimension pushes that stop at-or-past the box's own edge) and does not
+ * apply to a linear-gradient, which has no radius/center-distance
+ * concept — confirmed no analogous flatline here across the viewport
+ * heights tested below.
+ *
+ * Same "don't let the transparent stop land exactly on the boundary"
+ * principle still applies, just along one axis: the falloff starts at
+ * 65% (not right at the bottom) and reaches full transparency at 100%,
+ * so the transition is a gradual band rather than a sharp line, and (per
+ * the mask spanning the full hero section, see the wrapping div in
+ * NotebookHero) has nowhere left to clip before finishing.
+ */
+.hero-desk-mask {
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+}
