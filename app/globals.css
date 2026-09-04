@@ -175,9 +175,11 @@ body {
 /*
  * Desk zone background photo fade (components/hero/NotebookHero.tsx).
  * mask-image on the photo's own <img> (via next/image's `className`) —
- * erodes the photo's alpha directly so the flat --color-desk layer
- * beneath shows through where it fades. One mask, one photo layer; no
- * separate overlay div stacked on top of it.
+ * erodes the photo's alpha directly so whatever sits beneath it (body's
+ * own base color + grain, see .grain below) shows through where it
+ * fades. One mask, one photo layer; no separate overlay div stacked on
+ * top of it, and — as of the seam fix documented below — no separate
+ * flat-color div underneath it either.
  *
  * Linear, not radial: fades only toward the BOTTOM of the hero. Left,
  * right, and top stay at full opacity — `to bottom` only varies alpha
@@ -203,8 +205,150 @@ body {
  * so the transition is a gradual band rather than a sharp line, and (per
  * the mask spanning the full hero section, see the wrapping div in
  * NotebookHero) has nowhere left to clip before finishing.
+ *
+ * Eased, not a single linear ramp, from 50% to 100% — found after a
+ * visible seam was reported right where the photo hands off to the page
+ * content below. Every literal check at the time came back clean: the
+ * mask's own terminal stop genuinely resolves to alpha 0 (confirmed via
+ * getComputedStyle, not just this source), --color-desk and --color-base
+ * compute to the identical rgb(240,237,230), the <section> itself has no
+ * separate background of its own, and the <img>/its wrapper/the
+ * flat-color div/the section all share the exact same bounding box —
+ * nothing was clipping short or mismatched in color. Direct
+ * pixel-sampling of the rendered output (not eyeballing) also found no
+ * discrete single-row jump — the raw alpha ramp really is continuous.
+ * That analysis was real (a single linear stop does let this photo's
+ * own high-contrast detail stay legible for most of the ramp, then
+ * decline to zero at a constant rate, which is worth the eased tail
+ * below on its own merits) but it did NOT fix the reported seam —
+ * a fresh screenshot after this change showed the identical hard line
+ * in the identical place, because it was solving a color/alpha
+ * continuity problem and the seam was never that.
+ *
+ * The actual cause: the flat-color div this mask used to fade into had
+ * its own `grain` instance (components/hero/NotebookHero.tsx, since
+ * removed) — a second, independent noise pattern stacked directly in
+ * front of <body>'s own `grain` layer (see .grain below). Two separate
+ * `.grain` instances never tile continuously with each other no matter
+ * how exactly their color and opacity match, because each one's
+ * mask-image starts its noise tile at its own box's origin — CSS
+ * backgrounds don't share a coordinate space across element boundaries.
+ * That boundary, sitting right where the mask finishes fading (i.e.
+ * exactly the reported location), was the seam. Confirmed by grepping
+ * every `.grain`/mask-image/noise reference in and around the hero: the
+ * flat div was the one surface with a `grain` class of its own instead
+ * of relying on body's, unlike every other route wrapper on the site
+ * (which stay plain `position: relative`, per .grain's own comment,
+ * specifically so body's one layer shows through them). Fixed by
+ * deleting that div's fill and `grain` outright rather than adjusting
+ * either instance to match the other — since --color-desk was already
+ * confirmed identical to --color-base, and <main>/<section> paint
+ * nothing opaque over this zone, body's own layer now shows through
+ * directly with nothing in front of it to mismatch. Slopes per segment
+ * below: 0.035, 0.025, 0.015, 0.005 (opacity per percent of section
+ * height) — kept as the eased tail regardless, since it's still a real
+ * improvement over a single constant-rate linear stop, just not the fix
+ * for the seam itself.
  */
 .hero-desk-mask {
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    rgba(0, 0, 0, 0.56) 62%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0.06) 87%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    rgba(0, 0, 0, 0.56) 62%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0.06) 87%,
+    transparent 100%
+  );
+}
+
+/*
+ * Shared grain texture — the single source of truth every candidate
+ * surface opts into by adding the `grain` class, the same way every
+ * shadow on the site goes through lib/design/light.ts's shadowFor()
+ * instead of each component hardcoding its own box-shadow. One rule,
+ * reused as-is everywhere: notebook pages, the desk zone's flat-color
+ * fallback, PhotoFrame, FlatFrame's no-image fallback, HeroPhotoCard,
+ * and — the actual base page background, see below — <body> itself.
+ *
+ * Host element must be a positioning context (anything but `position:
+ * static`) for this `::before`'s `inset: 0` to size against just that
+ * element rather than a further-out ancestor. Deliberately NOT baked
+ * into this class as `.grain { position: relative }` — several hosts
+ * (the hero desk div) are already `position: absolute`, and a same-
+ * specificity `.grain` rule setting `relative` could win the cascade
+ * over Tailwind's `absolute` utility depending on source order, silently
+ * breaking their actual positioning. Each usage supplies its own
+ * `relative` alongside `grain` only where it doesn't already have a
+ * non-static position — see each call site's comment.
+ *
+ * `::before`, not `::after`, and this matters specifically for the
+ * <body> usage: per CSS's painting-order rules, a positioned descendant
+ * with z-index:auto (this pseudo-element) always paints ABOVE any
+ * non-positioned in-flow sibling, regardless of DOM order — so if <main>
+ * and <footer> (body's real children) were left as plain `position:
+ * static`, body's own grain would paint OVER their entire content,
+ * gradient-multiply-blending literal text and images. The fix: <main>
+ * and <footer> both stay `position: relative` (without their own
+ * `grain`) specifically so they land in the SAME painting category as
+ * body's pseudo-element (positioned, z-index:auto) — DOM/tree order then
+ * breaks the tie normally, and ::before (conceptually body's first
+ * child) is tree-order-EARLIER than the real <main>/<footer> children
+ * that come after it, so it paints first — i.e. behind them. Using
+ * ::after here would tree-order-tie in the wrong direction (last child,
+ * paints last, i.e. on top). This was found and fixed after the first
+ * version put `grain` on each route's inner max-w wrapper instead of on
+ * <body> — that widened-container-vs-viewport-width gap (visible margin
+ * strips outside max-w-[90rem]/etc. with no texture) is exactly what
+ * "the base page background" was supposed to mean; a per-route wrapper
+ * capped at some max-width can never be the full page background,
+ * however wide it is, since a wide-enough viewport always exceeds it.
+ *
+ * Technique: mask-image, NOT background-image, carries the noise. The
+ * SVG data URI is a static string — it cannot read `var(--color-ink)`,
+ * so it never encodes a color at all, only a shape: feTurbulence
+ * generates RGBA noise, and the feColorMatrix passes the (already-noisy)
+ * alpha channel straight through while zeroing R/G/B, so the resulting
+ * image is "black, opacity varies per-pixel." CSS mask-image defaults to
+ * alpha mode for non-SVG-<mask> sources, so that per-pixel alpha becomes
+ * the mask directly. The actual visible color is an ordinary, LIVE
+ * `background-color: var(--color-ink)` on this same element — masked by
+ * the noise shape, not baked into it. If --color-ink is ever retuned,
+ * grain follows automatically, same as every LIGHT-derived shadow does.
+ * This is deliberate: baking a static copy of ink's hex value into the
+ * SVG string was the alternative and was rejected — it would duplicate
+ * the token exactly the way this codebase avoids everywhere else
+ * (--color-rule's color-mix, shadowFor()'s color-mix).
+ *
+ * 128x128 tile, mask-repeat: repeat — small on purpose, both so the data
+ * URI stays a few hundred bytes and so the browser only ever decodes one
+ * shared bitmap (every `.grain` usage references the identical string,
+ * so the image cache serves one decoded copy site-wide, not one per
+ * element). opacity 0.045 and mix-blend-mode: multiply are the full
+ * extent of the effect — no gradient, no second shadow, nothing else
+ * layered in.
+ */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-ink);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 128px 128px;
+  mask-size: 128px 128px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }

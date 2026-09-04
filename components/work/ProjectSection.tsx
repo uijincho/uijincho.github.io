@@ -37,7 +37,7 @@ export function ProjectSection({ kind, projects }: { kind: ProjectKind; projects
       <ol className="mt-6 flex flex-col gap-16">
         {projects.map((p, i) => (
           <li key={p.slug} id={p.slug} className="scroll-mt-24">
-            <Link href={`/work/${p.slug}`} className="group flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+            <Link href={`/projects/${p.slug}`} className="group flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
               <div className="md:flex-1">
                 <div className="flex items-baseline gap-3">
                   <span className={`font-mono text-sm ${KIND_ACCENT_TEXT[kind]}`}>

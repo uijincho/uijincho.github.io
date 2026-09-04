@@ -10,13 +10,13 @@ import { SITE_URL } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = ["", "/work", "/about"].map((route) => ({
+  const staticRoutes: MetadataRoute.Sitemap = ["", "/projects", "/about"].map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: now,
   }));
 
   const projectRoutes: MetadataRoute.Sitemap = getAllProjects().map((project) => ({
-    url: `${SITE_URL}/work/${project.slug}`,
+    url: `${SITE_URL}/projects/${project.slug}`,
     lastModified: now,
   }));
 

@@ -79,7 +79,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${inter.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      {/* relative + grain: the actual base-page-background texture
+          (globals.css) lives here, not on any per-route wrapper — this is
+          the one element background-color: var(--color-base) is set on,
+          so it's the only element that's genuinely full-page-width at
+          every viewport, including past any route's own max-w cap. See
+          .grain's own comment in globals.css for why <main>/<footer>
+          each still need `relative` (without their own `grain`) for this
+          to paint behind their real content instead of over it. */}
+      <body className="relative min-h-full flex flex-col grain">
         <SiteNav />
         {children}
         <Footer />

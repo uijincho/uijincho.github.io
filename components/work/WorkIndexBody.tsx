@@ -4,6 +4,10 @@ import { CategoryNav } from "@/components/work/CategoryNav";
 import { ProjectSection } from "@/components/work/ProjectSection";
 import { WorkFilter } from "@/components/work/WorkFilter";
 
+import { JetBrains_Mono } from "next/font/google";
+
+const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
+
 /**
  * The actual /work index content: sticky per-track table of contents
  * (CategoryNav, desktop only) beside the full project listing
@@ -36,7 +40,7 @@ export function WorkIndexBody() {
   return (
     <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="mx-auto max-w-5xl">
-        <h1 className={`${TYPE.displayLg} text-ink`}>Work</h1>
+        <h1 className={`${mono.className} text-[36px] leading-none tracking-tight text-accent`}>selected projects</h1>
 
         <div className="mt-12 md:grid md:grid-cols-[180px_1fr] md:gap-16">
           <aside className="hidden md:block">

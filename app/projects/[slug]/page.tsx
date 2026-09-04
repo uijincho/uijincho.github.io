@@ -30,11 +30,11 @@ export async function generateMetadata({
   return {
     title: project.title,
     description: project.summary,
-    alternates: { canonical: `${SITE_URL}/work/${project.slug}` },
+    alternates: { canonical: `${SITE_URL}/projects/${project.slug}` },
     openGraph: {
       title: project.title,
       description: project.summary,
-      url: `${SITE_URL}/work/${project.slug}`,
+      url: `${SITE_URL}/projects/${project.slug}`,
       type: "article",
       images: [project.thumbnail],
     },
@@ -81,7 +81,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     // so the flex auto-margin-suppresses-stretch special case doesn't
     // apply, and max-w-5xl caps it normally. Verified: renders at
     // left:303.7px / width:1024px, identical to /work's content column.
-    <main className="mx-auto w-full max-w-4xl px-6 py-16">
+    //
+    // relative (no grain here) — the actual base-page-background texture
+    // lives on <body> (globals.css, app/layout.tsx), not per-route. This
+    // was the bug: a wrapper capped at max-w-4xl can never BE the full
+    // page background at wider viewports, whatever the cap. `relative`
+    // stays regardless — it keeps this <main> in the same CSS painting
+    // category as body's grain pseudo-element, so that layer sits behind
+    // this page's content instead of over it (see .grain's comment).
+    <main className="relative mx-auto w-full max-w-4xl px-6 py-16">
       <span className={`${TYPE.meta} ${KIND_ACCENT_TEXT[project.kind]}`}>{KIND_LABEL[project.kind]}</span>
       <h1 className={`${TYPE.displayLg} mt-2 text-ink`}>{project.title}</h1>
       <p className={`${TYPE.body} mt-4 max-w-[68ch] text-ink-muted`}>{project.summary}</p>

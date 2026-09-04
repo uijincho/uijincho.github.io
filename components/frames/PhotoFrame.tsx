@@ -19,7 +19,15 @@ interface PhotoFrameProps {
 /**
  * The site's PHOTOGRAPH treatment: cream frame, bottom-weighted caption
  * padding, fixed rotation (from ROTATIONS, via rotationIndex), single-
- * light-source drop shadow (from LIGHT, via shadowFor).
+ * light-source drop shadow (from LIGHT, via shadowFor), grain (from the
+ * shared `grain` class, globals.css).
+ *
+ * `grain` sits on this whole outer <figure> — one layer covers both the
+ * real-photo branch and the placeholder branch below without duplicating
+ * anything per-branch, since it's painted after (on top of) whichever one
+ * renders. `relative` added alongside it: this figure was `inline-block`
+ * only before, no positioning context of its own for grain's ::after to
+ * size against.
  *
  * For real photographs only — me, workspace, lab. Never for screenshots
  * or diagrams; those use FlatFrame. This is a deliberately separate
@@ -42,7 +50,7 @@ export function PhotoFrame({
 
   return (
     <figure
-      className={`inline-block select-none bg-raised px-[7px] pt-[7px] pb-[21px] ${className}`}
+      className={`relative inline-block select-none grain bg-raised px-[7px] pt-[7px] pb-[21px] ${className}`}
       style={{
         transform: `rotate(${rotation}deg)`,
         boxShadow: shadowFor(elevation),

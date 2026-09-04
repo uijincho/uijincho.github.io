@@ -44,7 +44,11 @@ export const metadata: Metadata = {
  */
 export default function About() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-24">
+    // relative (no grain here) — the actual base-page-background texture
+    // lives on <body> (globals.css, app/layout.tsx), not per-route.
+    // `relative` stays regardless — same CSS-painting-category reason as
+    // every other <main>, see .grain's comment in globals.css.
+    <main className="relative mx-auto max-w-2xl px-6 py-24">
       <h1 className={`${TYPE.displayLg} text-ink`}>About</h1>
 
       <div className="mt-8">

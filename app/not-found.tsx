@@ -18,8 +18,8 @@ export default function NotFound() {
         <Link href="/" className="font-mono text-xs uppercase tracking-wide text-accent hover:underline">
           home/
         </Link>
-        <Link href="/work" className="font-mono text-xs uppercase tracking-wide text-accent hover:underline">
-          work/
+        <Link href="/projects" className="font-mono text-xs uppercase tracking-wide text-accent hover:underline">
+          projects/
         </Link>
       </div>
     </main>

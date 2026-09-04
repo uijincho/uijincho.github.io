@@ -1,5 +1,4 @@
 import Image from "next/image";
-import type { CSSProperties } from "react";
 import { getProjectsByKind } from "@/lib/projects";
 import { resolveImage } from "@/lib/design/images";
 import { HERO_PHOTOS } from "@/lib/design/hero-photos";
@@ -33,31 +32,47 @@ import { TYPE } from "@/lib/design/type-scale";
  *    page's content even once its own hover-triggered transform makes it
  *    a stacking context.
  *
- * Desk (#e7dbc6) and cover (#3b2a1f) are intentional one-off colors
- * scoped to this component only — not added as global palette tokens in
- * globals.css, since they have exactly one consumer (this physical-object
- * metaphor) and aren't meant to be reused as UI colors elsewhere. Desk is
- * exposed as a LOCAL custom property (--color-desk, set via inline style
- * below) rather than a literal repeated in two places, since the desk zone
- * is TWO stacked layers that both need it: a full-bleed flat-color base,
- * then the photo on top of it with .hero-desk-mask (globals.css) applied
- * directly to the <img> — mask-image erodes the photo's own alpha toward
- * the bottom of the hero, letting the flat --color-desk layer beneath
- * show through there, while the left/right/top edges stay at full photo
- * opacity (a linear, bottom-only fade, not a vignette on all four sides).
- * See that class's own comment for why the mask lives on the <img>
- * itself. Both layers sit at -z-10 — behind the notebook
- * (position:relative, z-index:auto) and the #hero-sentinel marker,
- * without touching either's own z-index. Purely an edge treatment within
- * the existing desk zone: doesn't change the section's height or bleed
- * into the page below.
+ * Cover (#3b2a1f) is an intentional one-off color scoped to this
+ * component only — not added as a global palette token in globals.css,
+ * since it has exactly one consumer (this physical-object metaphor) and
+ * isn't meant to be reused as a UI color elsewhere.
+ *
+ * The desk zone used to be a separate flat --color-desk fill (a LOCAL
+ * custom property, one-off value matching --color-base) sitting under
+ * the photo, with its own `grain` instance so the fallback band revealed
+ * by .hero-desk-mask's fade had texture too. That was removed: it was a
+ * SECOND, independent `.grain` instance (its own ::before, its own noise
+ * origin at that div's box) stacked directly over body's own `grain`
+ * layer — two noise patterns that don't tile continuously with each
+ * other no matter how well their color/opacity match, which is what the
+ * hard seam at the fade's bottom edge actually was (see .hero-desk-mask's
+ * comment in globals.css for the full history; an earlier fix eased the
+ * mask's alpha ramp on the theory the seam was a color/alpha
+ * discontinuity — it wasn't, and didn't help). Since --color-desk was
+ * already confirmed identical to --color-base, dropping the div's own
+ * fill+grain entirely costs nothing visually: <main> (app/page.tsx) and
+ * this <section> are both plain `position: relative` with no background
+ * of their own, so body's single grain layer (app/layout.tsx) already
+ * sits directly behind this whole zone and now shows through for real,
+ * one noise pattern instead of two — including the missing-photo
+ * fallback case, which today is just body's own layer with nothing
+ * painted over it. The photo layer alone remains, fading out via
+ * .hero-desk-mask (globals.css) toward the bottom of the hero — left,
+ * right, and top stay at full photo opacity (a linear, bottom-only
+ * fade, not a vignette on all four sides). See that class's own comment
+ * for why the mask lives on the <img> itself. It sits at -z-10 — behind
+ * the notebook (position:relative, z-index:auto) and the #hero-sentinel
+ * marker, without touching either's own z-index. Purely an edge
+ * treatment within the existing desk zone: doesn't change the section's
+ * height or bleed into the page below.
  */
 export function NotebookHero() {
   const softwareCount = getProjectsByKind("software").length;
   const researchCount = getProjectsByKind("research").length;
-  // Missing file → skip the photo layer entirely (flat --color-desk fill
-  // still renders underneath), same "render nothing, no broken-image
-  // icon" convention as the stickers below.
+  // Missing file → skip the photo layer entirely (body's own base color
+  // + grain show through underneath, nothing rendered here to fall back
+  // to), same "render nothing, no broken-image icon" convention as the
+  // stickers below.
   const deskPhoto = resolveImage("/images/hero/desk-bg.jpg");
   const resolvedPhotos = HERO_PHOTOS.map((photo) => {
     const { src, isPlaceholder } = resolveImage(photo.src);
@@ -77,18 +92,32 @@ export function NotebookHero() {
     <section
       aria-label="Introduction"
       className="relative flex h-screen w-full items-center justify-center px-4"
-      style={{ "--color-desk": "#f0ede6" } as CSSProperties}
     >
-      {/* Desk zone, two stacked layers, both behind the notebook (-z-10):
-          flat --color-desk fill full-bleed, then the photo on top of it
-          with .hero-desk-mask (globals.css) applied directly to the
-          <img> — a linear mask-image that fades the photo's own alpha
-          toward the bottom of the hero only, so the flat color shows
-          through there while the left/right/top edges stay full-opacity
-          photo. The wrapping div is inset-0 across the full hero section
-          (not just the photo's visible extent), so the mask has nowhere
-          to clip before its gradient finishes. */}
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[var(--color-desk)]" />
+      {/* Desk zone: just the photo now, behind the notebook (-z-10), with
+          .hero-desk-mask (globals.css) applied directly to the <img> — a
+          linear mask-image that fades the photo's own alpha toward the
+          bottom of the hero only, so whatever is behind it shows through
+          there while the left/right/top edges stay full-opacity photo.
+          The wrapping div is inset-0 across the full hero section (not
+          just the photo's visible extent), so the mask has nowhere to
+          clip before its gradient finishes.
+
+          There used to be a separate flat --color-desk fill + its own
+          `grain` instance under the photo here, standing in both for the
+          fallback shown through the fade and for the missing-photo case.
+          Removed — it was a second, independently-generated grain layer
+          sitting directly in front of body's own (app/layout.tsx), and
+          two noise patterns never tile continuously across an element
+          boundary even with matching color/opacity; that mismatch was
+          the hard seam reported at the fade's bottom edge, not a
+          color/alpha discontinuity (see globals.css's .hero-desk-mask
+          comment for the full history). --color-desk was already
+          confirmed identical to --color-base, so nothing behind the
+          photo needs its own copy of either the color or the texture:
+          <main> and this <section> are plain `position: relative` with
+          no background of their own, so body's single grain layer
+          already sits directly behind this whole zone (and shows
+          through as-is in the missing-photo case too). */}
       {deskPhoto.src && (
         <div aria-hidden="true" className="absolute inset-0 -z-10">
           <Image
@@ -129,8 +158,16 @@ export function NotebookHero() {
           {/* Left page: photo stack. position:relative makes this the
               containing block for the stack's absolute positioning — it
               deliberately has no z-index of its own (stays auto), so it
-              never competes with the stack <button>'s explicit z-20. */}
-          <div className="relative bg-raised">
+              never competes with the stack <button>'s explicit z-20.
+              `grain` reuses this same `relative` as its positioning
+              context. Its ::after carries pointer-events:none (see
+              globals.css), so it never intercepts the stack button's or
+              stickers' clicks regardless of paint order, and — since it
+              sizes to inset:0 on this div specifically, not a larger
+              ancestor — never needs `overflow:hidden` here, which would
+              otherwise clip the stickers positioned in the bands above/
+              below the stack's hit area. */}
+          <div className="relative grain bg-raised">
             <HeroPhotoStack photos={resolvedPhotos} />
             {/* Hobby stickers. Positioned in the bands above/below the
                 stack's ~200x206 hit area (HeroPhotoStack's STACK_HIT_*),
@@ -151,8 +188,11 @@ export function NotebookHero() {
 
           {/* Right page: identity. No z-index here either — stays at the
               stacking-context default, so the stack's z-20 (see
-              HeroPhotoStack) reliably renders above this during the pull. */}
-          <div className="flex flex-col justify-center bg-raised px-6 py-6 sm:px-10">
+              HeroPhotoStack) reliably renders above this during the pull.
+              `relative` added here (this div had no position of its own
+              before) purely so `grain`'s ::after has this div, not some
+              further-out ancestor, as its inset:0 positioning context. */}
+          <div className="relative flex flex-col justify-center bg-raised grain px-6 py-6 sm:px-10">
             <p className={TYPE.meta}>Portfolio 2026</p>
             <HandwrittenName />
             <div aria-hidden="true" className="mt-1 w-24 rounded-full bg-accent" />

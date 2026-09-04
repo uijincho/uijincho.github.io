@@ -16,8 +16,11 @@ export function CategoryNav({ kind, projects }: { kind: ProjectKind; projects: P
       <ol className="mt-3 flex flex-col gap-2">
         {projects.map((p, i) => (
           <li key={p.slug}>
-            <a href={`#${p.slug}`} className="font-mono text-xs text-ink-muted hover:text-ink">
-              {String(i + 1).padStart(2, "0")} {p.title}
+            <a href={`#${p.slug}`} className="font-mono text-xs uppercase text-ink-muted hover:text-ink">
+              {/* Display only — the href above keeps the real slug (with
+                  hyphens) since it must match ProjectSection's `id={p.slug}`
+                  anchor exactly. */}
+              {String(i + 1).padStart(2, "0")} {p.slug.replace(/-/g, " ")}
             </a>
           </li>
         ))}

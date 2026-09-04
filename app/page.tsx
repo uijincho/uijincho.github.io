@@ -42,8 +42,14 @@ export default function Home() {
           item) and ordinary block-centering math applies. Wrapping both
           routes' content in <main> the same way makes WorkIndexBody a
           non-flex-item block child in both places — same containing
-          block, same box-model math, same rendered width and position. */}
-      <main>
+          block, same box-model math, same rendered width and position.
+
+          `relative` (no `grain` here) so this <main> paints in the same
+          CSS stacking category as <body>'s own grain pseudo-element —
+          see .grain's comment in globals.css. Without it, body's grain
+          (a positioned, z-index:auto layer) would paint ABOVE this
+          plain-static <main>'s entire content instead of behind it. */}
+      <main className="relative">
         {/* Zone 1: the notebook spread, desktop/tablet (md+). Do not attempt
             to scale this down for mobile — see MobileHeroTodo. */}
         <div className="hidden md:block">

@@ -50,8 +50,7 @@ export const HERO_STICKERS: HeroSticker[] = [
   {
     src: "/images/stickers/badminton.png",
     label: "i <3 brownubadminton",
-    href: "https://placeholder-badminton.example.com",
-    destination: "my match log",
+    href: null,
     x: 20,
     y: 17,
     size: 17,
@@ -61,7 +60,7 @@ export const HERO_STICKERS: HeroSticker[] = [
   {
     src: "/images/stickers/food.png",
     label: "check out my beli",
-    href: "https://placeholder-food.example.com",
+    href: "https://beliaapp.co/app/RedBeane",
     destination: "my beli account",
     x: 84,
     y: 16,
@@ -81,8 +80,8 @@ export const HERO_STICKERS: HeroSticker[] = [
   },
   {
     src: "/images/stickers/music.png",
-    label: "Music",
-    href: "https://placeholder-music.example.com",
+    label: "my playlists",
+    href: "https://open.spotify.com/playlist/6MMk25QNUP4OwxLYdLVCGR?si=674a0b4a6f654c60",
     destination: "my playlists",
     x: 80,
     y: 83,

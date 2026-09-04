@@ -64,7 +64,13 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop,
       }}
     >
       <div
-        className={`bg-raised pt-[7px] pr-[7px] pb-[21px] pl-[7px] transition-transform duration-150 motion-reduce:transition-none ${
+        // relative + grain: same shared texture as PhotoFrame, covering
+        // both the real-photo and placeholder branches below in one
+        // layer since it's painted on top of whichever renders. Its
+        // ::after carries pointer-events:none (globals.css), so it can't
+        // interfere with the stack <button>'s hit area even though this
+        // card sits inside it.
+        className={`relative bg-raised pt-[7px] pr-[7px] pb-[21px] pl-[7px] grain transition-transform duration-150 motion-reduce:transition-none ${
           isTop
             ? "group-hover:-translate-y-[9px] group-hover:rotate-[-1.5deg] group-focus-visible:-translate-y-[9px] group-focus-visible:rotate-[-1.5deg]"
             : ""

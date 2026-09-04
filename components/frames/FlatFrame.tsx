@@ -36,8 +36,14 @@ export function FlatFrame({ src, alt, width, height, caption, className = "", fl
   return (
     <figure className={`inline-block border border-rule ${className}`} style={fluid ? { maxWidth: "100%" } : undefined}>
       {isPlaceholder ? (
+        // grain here only, not on the outer <figure> — this branch is
+        // the sole flat-fill surface FlatFrame ever shows (the real-image
+        // branch below stays crisp on purpose; screenshots/diagrams
+        // shouldn't get a film-grain treatment). `relative` added
+        // alongside it since this div has no positioning context of its
+        // own otherwise.
         <div
-          className="flex items-center justify-center bg-raised font-mono text-[10px] uppercase tracking-wide text-ink-muted"
+          className="relative flex items-center justify-center bg-raised grain font-mono text-[10px] uppercase tracking-wide text-ink-muted"
           style={fluidStyle ?? { width, height }}
         >
           {PLACEHOLDER_LABEL}

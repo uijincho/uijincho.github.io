@@ -9,7 +9,7 @@ export function ProjectPager({ prev, next }: { prev?: Project; next?: Project })
   return (
     <nav aria-label="Project navigation" className="mt-16 flex justify-between border-t border-rule pt-8">
       {prev ? (
-        <Link href={`/work/${prev.slug}`} className="group flex flex-col">
+        <Link href={`/projects/${prev.slug}`} className="group flex flex-col">
           <span className={TYPE.meta}>← Previous</span>
           <span className={`mt-2 font-mono text-xs uppercase tracking-wide ${KIND_ACCENT_TEXT[prev.kind]}`}>
             {KIND_LABEL[prev.kind]}
@@ -22,7 +22,7 @@ export function ProjectPager({ prev, next }: { prev?: Project; next?: Project })
         <span />
       )}
       {next ? (
-        <Link href={`/work/${next.slug}`} className="group flex flex-col items-end text-right">
+        <Link href={`/projects/${next.slug}`} className="group flex flex-col items-end text-right">
           <span className={TYPE.meta}>Next →</span>
           <span className={`mt-2 font-mono text-xs uppercase tracking-wide ${KIND_ACCENT_TEXT[next.kind]}`}>
             {KIND_LABEL[next.kind]}
