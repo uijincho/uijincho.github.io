@@ -6,6 +6,7 @@ import { HERO_STICKERS } from "@/lib/design/hero-stickers";
 import { HeroPhotoStack } from "@/components/hero/HeroPhotoStack";
 import { HeroSticker } from "@/components/hero/HeroSticker";
 import { HandwrittenName } from "@/components/hero/HandwrittenName";
+import { ContactIcons } from "@/components/ContactIcons";
 import { TYPE } from "@/lib/design/type-scale";
 
 /**
@@ -159,15 +160,22 @@ export function NotebookHero() {
               containing block for the stack's absolute positioning — it
               deliberately has no z-index of its own (stays auto), so it
               never competes with the stack <button>'s explicit z-20.
-              `grain` reuses this same `relative` as its positioning
-              context. Its ::after carries pointer-events:none (see
-              globals.css), so it never intercepts the stack button's or
-              stickers' clicks regardless of paint order, and — since it
-              sizes to inset:0 on this div specifically, not a larger
-              ancestor — never needs `overflow:hidden` here, which would
-              otherwise clip the stickers positioned in the bands above/
-              below the stack's hit area. */}
-          <div className="relative grain bg-raised">
+              `notebook-page-left` (globals.css) rounds this page's two
+              outer corners (top-left/bottom-left — the spine-side corners
+              stay square) and draws the outer-edge paper-thickness strip;
+              its ::after carries pointer-events:none, so it never
+              intercepts the stack button's or stickers' clicks regardless
+              of paint order, and — since it sizes to this div specifically,
+              not a larger ancestor — never needs `overflow:hidden` here,
+              which would otherwise clip both the stickers positioned in
+              the bands above/below the stack's hit area AND the stack's
+              own hover pull-out toward the gutter.
+
+              No `grain` here (unlike the right page) — this page is meant
+              to read as a plain photo surface, not paper stock; the grain
+              texture is what distinguishes the "writing" page from this
+              one, not a shared base treatment both pages carry. */}
+          <div className="relative notebook-page-left bg-raised">
             <HeroPhotoStack photos={resolvedPhotos} />
             {/* Hobby stickers. Positioned in the bands above/below the
                 stack's ~200x206 hit area (HeroPhotoStack's STACK_HIT_*),
@@ -183,37 +191,74 @@ export function NotebookHero() {
             ))}
           </div>
 
-          {/* Gutter / spine */}
-          <div aria-hidden="true" style={{ background: "color-mix(in srgb, var(--color-ink) 17%, transparent)" }} />
+          {/* Gutter / spine. A gradient, not a flat fill — dark → light →
+              dark, left to right, all still --color-ink at varying
+              opacity (never a new hue) — simulating light catching the
+              raised fold, darkest right at each page's edge and lightest
+              at the spine's own center. */}
+          <div
+            aria-hidden="true"
+            style={{
+              background:
+                "linear-gradient(to right, color-mix(in srgb, var(--color-ink) 42%, transparent), color-mix(in srgb, var(--color-ink) 10%, transparent), color-mix(in srgb, var(--color-ink) 42%, transparent))",
+            }}
+          />
 
           {/* Right page: identity. No z-index here either — stays at the
               stacking-context default, so the stack's z-20 (see
               HeroPhotoStack) reliably renders above this during the pull.
-              `relative` added here (this div had no position of its own
-              before) purely so `grain`'s ::after has this div, not some
-              further-out ancestor, as its inset:0 positioning context. */}
-          <div className="relative flex flex-col justify-center bg-raised grain px-6 py-6 sm:px-10">
-            <p className={TYPE.meta}>Portfolio 2026</p>
-            <HandwrittenName />
-            <div aria-hidden="true" className="mt-1 w-24 rounded-full bg-accent" />
-            <p className={`${TYPE.body} mt-4 text-ink`}>
-              applied math + computer science @ Brown
-            </p>
-            <div className="mt-6 border-t border-rule pt-4">
-              <a href="#section-software" className="group flex items-baseline justify-between">
-                <span className="font-mono text-xs uppercase tracking-wide text-accent group-hover:underline">
-                  Software
-                </span>
-                <span className="font-mono text-xs text-ink-muted">&gt;</span>
-              </a>
-              <a href="#section-research" className="group mt-2 flex items-baseline justify-between">
-                <span className="font-mono text-xs uppercase tracking-wide text-support group-hover:underline">
-                  Research
-                </span>
-                <span className="font-mono text-xs text-ink-muted">&gt;</span>
-              </a>
+              `relative` (this div had no position of its own before) is
+              what gives `grain`'s ::before and `notebook-page-right`'s
+              ::after this div, not some further-out ancestor, as their
+              inset:0/edge positioning context. `notebook-page-right`
+              rounds this page's two outer corners (top-right/bottom-right)
+              and draws the outer-edge paper-thickness strip on the right
+              edge only — never the spine-side (left) edge.
+
+              Content below is one flex column split into two groups: the
+              identity block (`my-auto`) and the icon row + scroll cue
+              (plain, last). Flex auto-margins on only the first group's
+              top+bottom consume 100% of whatever vertical space isn't
+              taken by either group, split evenly — which centers the
+              identity block within the space ABOVE the second group while
+              pinning that second group flush to this column's own bottom
+              edge (its height already comes from CSS Grid's default
+              stretch, via the parent grid). That's what keeps the icon
+              row + "Scroll to turn the page" pinned toward the bottom
+              instead of the whole block sitting top-anchored with empty
+              space left below it, while still giving the identity block
+              itself the same vertical-centering treatment it already had
+              (previously via `justify-center` on this whole column, which
+              centered everything as one clump — including the icon row —
+              rather than pinning the icon row separately). */}
+          <div className="relative flex flex-col bg-raised grain notebook-page-right px-6 py-6 sm:px-10">
+            <div className="my-auto">
+              <p className={TYPE.meta}>Portfolio 2026</p>
+              <HandwrittenName />
+              <p className={`${TYPE.body} mt-4 text-ink`}>
+                applied math + computer science @ Brown
+              </p>
+              <div className="mt-6 border-t border-rule pt-4">
+                <a href="#section-software" className="group flex items-baseline justify-between">
+                  <span className="font-mono text-xs uppercase tracking-wide text-accent group-hover:underline">
+                    Software
+                  </span>
+                  <span className="font-mono text-xs text-ink-muted">&gt;</span>
+                </a>
+                <a href="#section-research" className="group mt-2 flex items-baseline justify-between">
+                  <span className="font-mono text-xs uppercase tracking-wide text-support group-hover:underline">
+                    Research
+                  </span>
+                  <span className="font-mono text-xs text-ink-muted">&gt;</span>
+                </a>
+              </div>
             </div>
-            <p className="mt-8 font-mono text-[11px] uppercase tracking-wide text-ink-muted">Scroll to turn the page</p>
+            <div>
+              <ContactIcons />
+              <p className="mt-8 font-mono text-[11px] uppercase tracking-wide text-ink-muted">
+                Scroll to turn the page
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -341,6 +341,16 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  /* Matches whatever border-radius the host itself has (e.g. the notebook
+     pages' outer-corner rounding below) via the literal `inherit` keyword
+     — this works even though border-radius isn't a normally-inherited
+     property, and it's what lets this inset:0 pseudo-element's own corners
+     follow the host's rounded shape WITHOUT needing `overflow: hidden` on
+     the host. That matters specifically for the notebook hero's left page,
+     which can never get overflow:hidden (see .notebook-page-left's comment
+     below). Resolves to 0 (a no-op) on every other `.grain` host, since
+     none of them set a border-radius of their own. */
+  border-radius: inherit;
   background-color: var(--color-ink);
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -350,5 +360,70 @@ body {
   mask-repeat: repeat;
   opacity: 0.045;
   mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/*
+ * Notebook page shape (components/hero/NotebookHero.tsx' two page divs).
+ * Two additions, each scoped to a page's own OUTER edge — the edge away
+ * from the spine, never the spine-side edge:
+ *   1. Corner rounding on that page's two outer corners only (top-left +
+ *      bottom-left on the left page, top-right + bottom-right on the
+ *      right page). The two spine-side corners on each page stay square —
+ *      a real binding doesn't round at the fold.
+ *   2. A thin vertical strip right at that outer edge, in --color-ink at
+ *      low opacity, suggesting the thickness of stacked paper. Inset a
+ *      couple px from the true edge; never on the spine-side edge, and
+ *      never wide enough to read as a rule across the page.
+ *
+ * Both use a fixed px value, not a relative unit — the notebook's outer
+ * size scales with the viewport (min(72vw, 850px), see NotebookHero's own
+ * doc comment) but interior details, this included, stay fixed regardless
+ * of how big the notebook itself gets.
+ *
+ * The edge strip (a ::after, so it paints above `.grain`'s ::before and
+ * above the page's own in-flow content at the same auto z-index — tree
+ * order breaks the tie, see .grain's own comment for the general
+ * mechanism) can't rely on overflow:hidden to clip itself to the rounded
+ * corner: the left page specifically can never get overflow:hidden (the
+ * photo stack's hover pull-out crosses the page boundary toward the
+ * gutter — see NotebookHero's and HeroPhotoStack's own doc comments).
+ * Instead it simply stops --notebook-page-radius short of each end, i.e.
+ * it never enters the curved corner region to begin with, which reads
+ * identically to a full-height strip actually clipped by that curve.
+ */
+:root {
+  --notebook-page-radius: 12px;
+}
+
+.notebook-page-left {
+  border-top-left-radius: var(--notebook-page-radius);
+  border-bottom-left-radius: var(--notebook-page-radius);
+}
+
+.notebook-page-left::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: var(--notebook-page-radius);
+  bottom: var(--notebook-page-radius);
+  width: 3px;
+  background: color-mix(in srgb, var(--color-ink) 11%, transparent);
+  pointer-events: none;
+}
+
+.notebook-page-right {
+  border-top-right-radius: var(--notebook-page-radius);
+  border-bottom-right-radius: var(--notebook-page-radius);
+}
+
+.notebook-page-right::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: var(--notebook-page-radius);
+  bottom: var(--notebook-page-radius);
+  width: 3px;
+  background: color-mix(in srgb, var(--color-ink) 11%, transparent);
   pointer-events: none;
 }

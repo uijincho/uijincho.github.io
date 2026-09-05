@@ -11,6 +11,15 @@ interface PhotoFrameProps {
   caption?: string;
   /** Index into the shared ROTATIONS array — never a random value. */
   rotationIndex: number;
+  /**
+   * Set false to render dead flat (no transform at all, not even
+   * rotate(0deg)) instead of the ROTATIONS-derived tilt. The 1-3deg
+   * magnitude in lib/design/rotation.ts is "never 0, per spec" as the
+   * DEFAULT scattered-photo look — this is the deliberate, explicit
+   * opt-out for a call site that wants a square-on portrait instead,
+   * not a silent contradiction of that rule.
+   */
+  rotate?: boolean;
   /** Shadow intensity multiplier; 1 = resting. Higher lifts it further off the page. */
   elevation?: number;
   className?: string;
@@ -42,6 +51,7 @@ export function PhotoFrame({
   height,
   caption,
   rotationIndex,
+  rotate = true,
   elevation = 1,
   className = "",
 }: PhotoFrameProps) {
@@ -52,7 +62,7 @@ export function PhotoFrame({
     <figure
       className={`relative inline-block select-none grain bg-raised px-[7px] pt-[7px] pb-[21px] ${className}`}
       style={{
-        transform: `rotate(${rotation}deg)`,
+        transform: rotate ? `rotate(${rotation}deg)` : undefined,
         boxShadow: shadowFor(elevation),
       }}
     >
