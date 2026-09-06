@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+/*
+ * --font-display (Archivo)    headings
+ * --font-sans    (Inter)      default body font, UI/labels/nav/card text
+ * --font-serif   (Newsreader) long-form MDX article body
+ * --font-mono    (JetBrains Mono) meta/labels/tags/index numbers
+ */
+@theme inline {
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-newsreader);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+/*
+ * Palette: warm brown-black ink, maroon accent, brick support. Contrast
+ * against --color-base is WCAG AA-compliant for normal text.
+ */
+@theme {
+  --color-base: #f0ede6;
+  --color-raised: #f7f5ef;
+  --color-ink: #211812;
+  --color-ink-muted: #665c50;
+  --color-accent: #5e101e;
+  --color-support: #a0442a;
+  --color-rule: color-mix(in srgb, var(--color-ink) 15%, transparent);
+  /* Code block background (mdx-components.tsx `pre`). */
+  --color-code: #eae6dc;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-base);
+  color: var(--color-ink);
+}
+
+/* Focus states, site-wide: plain CSS outline on every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* /work mobile filter (components/work/WorkFilter.tsx): hides the non-selected track's section below the md breakpoint. */
+@media (max-width: 767px) {
+  [data-active-filter="software"] [data-kind="research"],
+  [data-active-filter="research"] [data-kind="software"] {
+    display: none;
+  }
+}
+
+/*
+ * ~uijincho identity mark typing effect (components/hero/HandwrittenName.tsx).
+ * Decorative only — animates the visible width of an aria-hidden copy,
+ * never the real text. steps(9) and 9ch match the fixed 9-character
+ * "~uijincho" string in a monospace font. Loops every --identity-cycle
+ * (default 15s); the cursor's blink duration below is derived from the
+ * same variable so the two stay in sync.
+ */
+.identity-mark {
+  --identity-cycle: 15s;
+}
+
+@keyframes identity-typewriter {
+  0% {
+    width: 0;
+    animation-timing-function: steps(9, end);
+  }
+  3%,
+  100% {
+    width: 9ch;
+  }
+}
+
+/* Abrupt on/off blink, reading as a terminal cursor rather than a fade/pulse. */
+@keyframes identity-cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.identity-typewriter {
+  animation: identity-typewriter var(--identity-cycle) infinite;
+}
+
+.identity-cursor {
+  animation: identity-cursor-blink calc(var(--identity-cycle) / 15) steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .identity-typewriter {
+    width: 9ch;
+    animation: none;
+  }
+
+  .identity-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/*
+ * Hero sticker tooltip Escape-dismiss (components/hero/HeroSticker.tsx).
+ * Force-hides the tooltip when the wrapper's data-dismissed attribute is
+ * set by a keydown handler, satisfying WCAG 1.4.13.
+ */
+.hero-sticker[data-dismissed="true"] [role="tooltip"] {
+  opacity: 0 !important;
+}
+
+/*
+ * Desk zone background photo fade (components/hero/NotebookHero.tsx).
+ * mask-image on the photo's own <img>, eroding its alpha so body's base
+ * color + grain show through underneath. Linear (not radial), fading
+ * only toward the bottom — left, right, and top stay full opacity.
+ * Eased ramp from 50% to 100% rather than a single linear stop.
+ */
+.hero-desk-mask {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    rgba(0, 0, 0, 0.56) 62%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0.06) 87%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    rgba(0, 0, 0, 0.56) 62%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0.06) 87%,
+    transparent 100%
+  );
+}
+
+/*
+ * Shared grain texture, applied via the `grain` class: notebook pages,
+ * PhotoFrame, FlatFrame's no-image fallback, HeroPhotoCard, and <body>
+ * itself (the base page background).
+ *
+ * Host element must be a positioning context (anything but `position:
+ * static`) for this `::before`'s `inset: 0` to size correctly; each
+ * usage supplies its own `relative` where needed rather than baking it
+ * into this class, since some hosts are already `position: absolute`.
+ *
+ * Technique: mask-image (not background-image) carries the noise via an
+ * SVG feTurbulence filter; the visible color comes from a live
+ * `background-color: var(--color-ink)`, masked by the noise shape, so
+ * it follows any future --color-ink change automatically. 128x128 tile,
+ * repeated; opacity 0.045, mix-blend-mode: multiply.
+ */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Matches the host's own border-radius, so this pseudo-element's corners
+     follow the host's rounded shape without needing overflow:hidden. */
+  border-radius: inherit;
+  background-color: var(--color-ink);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 128px 128px;
+  mask-size: 128px 128px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/*
+ * Notebook page shape (components/hero/NotebookHero.tsx's two page divs).
+ * Rounds each page's two outer corners only (spine-side corners stay
+ * square), and draws a thin vertical strip near the outer edge
+ * suggesting stacked paper thickness. Fixed px values, not relative
+ * units — interior details stay fixed regardless of notebook size.
+ */
+:root {
+  --notebook-page-radius: 12px;
+}
+
+.notebook-page-left {
+  border-top-left-radius: var(--notebook-page-radius);
+  border-bottom-left-radius: var(--notebook-page-radius);
+}
+
+.notebook-page-left::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: var(--notebook-page-radius);
+  bottom: var(--notebook-page-radius);
+  width: 3px;
+  background: color-mix(in srgb, var(--color-ink) 11%, transparent);
+  pointer-events: none;
+}
+
+.notebook-page-right {
+  border-top-right-radius: var(--notebook-page-radius);
+  border-bottom-right-radius: var(--notebook-page-radius);
+}
+
+.notebook-page-right::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: var(--notebook-page-radius);
+  bottom: var(--notebook-page-radius);
+  width: 3px;
+  background: color-mix(in srgb, var(--color-ink) 11%, transparent);
+  pointer-events: none;
+}

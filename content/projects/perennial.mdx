@@ -1,0 +1,78 @@
+---
+title: "perennial (YHack 2026 Winner)"
+slug: "perennial"
+kind: "software"
+order: 2
+summary: "track pain and symptoms of chronic conditions in a machine learning android & wearOS application"
+role: "bleh"
+timeline: "Spring 2026"
+tags: ["Android App Dev", "Machine Learning"]
+stack: ["Kotlin", "Firebase", "XGBoost"]
+links:
+  repo: "https://github.com/ZacharyYW/perennial"
+  demo: "https://youtu.be/71_IR5COyFY?si=YMS9ruPFCQQstOyW"
+thumbnail: "/images/projects/perennial.png"
+featured: false
+---
+
+## Background
+
+perennial was born from the quiet crisis of endometriosis, a menstrual condition that notoriously takes a decade and invasive surgery to definitively diagnose. To endure this diagnostic purgatory and build a case to access life-changing treatment, patients are forced to meticulously track their symptoms while facing systematic sexism and bias. Managing chronic pain is already exhausting, and traditional health trackers only add to the burden: most apps on the market are sterile and hyper-clinical, focusing so heavily on the negative aspects of illness that users end up feeling like faceless stats rather than people.
+
+While endometriosis was our starting issue, we quickly realized this struggle is more widespread, which inspired us to build an accessible tool for anyone managing chronic, cyclical pain. People navigating these conditions don't need more hospital charts: they need a private and calming sanctuary that validates their experience. perennial reframes flare-ups as seasons of dormancy to weather through before the next bloom, reminding users of their own deep-rooted resilience.
+
+## WearOS Integration
+
+perennial pulls continuous health data directly from a smartwatch to automatically detect and log potential pain sessions, cutting down the cognitive load on high-pain days when manual logging is hardest. Users can also discreetly measure and record pain on the watch itself, with the session syncing back to the app for later review, so tracking doesn't require pulling out a phone in the moment.
+
+## The Bloom Scale
+
+Instead of standard, clinical "pain faces," perennial uses custom botanical bloom icons: a severe pain day renders as a crying lotus flower, a low pain day as a smiling succulent. It's a small design choice, but it shifts the emotional register of logging pain from diagnostic to gentle.
+
+## Mindful Logging and Insights
+
+Users can log or edit manual pain sessions and menstrual cycles, capturing start and end times, peak pain levels on a 1-10 scale, specific symptoms (cramping, fatigue, nausea), private journal notes, and menstrual flow. That data feeds into a holistic "day score," which users can explore through a swipeable weekly strip and an interactive monthly calendar to spot patterns in their own cycles and seasons.
+
+## Personalized Machine Learning
+
+A research-backed ML model, built with decision trees, quantifies pain and gradually personalizes itself to each user's data over time, so the model gets more accurate to that specific person the more they log.
+
+## Design and Privacy
+
+The interface is deliberately organic: sage greens, warm browns, and creams, paired with minimalist typewriter typography, to reduce sensory overload and anxiety for users already managing chronic pain. On the backend, Firebase Authentication (Email, Google, and Anonymous sign-in) and Firebase Storage keep this deeply personal health data private and under the user's control.
+
+## How We Built It
+
+- **Frontend**: Kotlin, Android Studio
+- **Wearables**: Kotlin, WearOS and the Samsung Health SDK
+- **Machine learning**: XGBoost, NumPy, Pandas, matplotlib, PyTorch, Jupyter, Scikit-learn, Firebase Functions
+- **Backend and auth**: Firebase Authentication and Storage
+
+## Challenges
+
+**Data collection.** No one on our team has endometriosis, so safely capturing representative training data was a real hurdle. We worked around it by using a TENS machine to simulate cyclical pain on ourselves (painfully realistic) and cross-referencing the results against published medical studies.
+
+**Late-stage integration.** The mobile UI and the WearOS/ML components were developed in silos, and merging them in the final hours of the hackathon created a stressful bottleneck of last-minute bug fixing.
+
+## Accomplishments
+
+We're proud of planning cohesive, robust features rather than a shallow feature list: options like uploading pain sessions directly through the app for accessibility, and private journaling users can revisit anytime. On the ML side, we successfully trained a custom model to interpret localized pain data against published research to high accuracy, with a pipeline designed to keep improving as more records come in. The WearOS integration lets users log pain discreetly on the watch with the data flowing straight into the app, and the day-score design turns raw logged data into something quantifiable but still lighthearted rather than clinical.
+
+## What We Learned
+
+We learned how to bridge the gap between hardware sensors and human users, and got hands-on experience keeping a UI and user experience cohesive and intuitive across both mobile and wearable form factors.
+
+## What's Next
+
+- **Launch**: release the Android app on the Google Play Store
+- **Platform expansion**: adapt perennial for iOS and other smartwatch ecosystems
+- **Iterate**: actively fold in feedback from the chronic pain community
+- **Customize**: build adaptable pipelines so users can tailor tracking metrics to their own bodies and specific conditions
+- **Diversify**: investigate other chronic illnesses and adapt perennial's focus accordingly
+
+## Demo
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/71_IR5COyFY?si=ylx8iehmPwLydnUt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div className="caption">
+    Demo video of perennial: WearOS integration, the bloom scale, and mindful logging in action.
+</div>
