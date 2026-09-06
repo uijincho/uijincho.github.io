@@ -110,6 +110,13 @@ export function HeroPhotoCard({ src, isPlaceholder, alt, caption, offset, isTop,
             height={PHOTO_SIZE}
             priority={priority}
             className="block object-cover"
+            // Tailwind's preflight reset sets `img { height: auto }`, which
+            // overrides the height (but not width) attribute above for any
+            // non-square source photo — Next.js then warns in dev that
+            // width/height were modified independently. Pin both explicitly
+            // so the rendered box always matches, regardless of source
+            // aspect ratio (object-cover still crops the content to fit).
+            style={{ width: PHOTO_SIZE, height: PHOTO_SIZE }}
           />
         )}
         <p className="mt-1 text-center font-mono text-[11px] tracking-wide text-ink-muted">{caption}</p>

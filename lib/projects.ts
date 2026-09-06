@@ -38,7 +38,8 @@ export interface SoftwareProject extends ProjectFrontmatterBase {
 export interface ResearchProject extends ProjectFrontmatterBase {
   kind: "research";
   lab: string;
-  collaborators: string[];
+  /** Omit entirely for solo projects — ProjectMeta only renders this line when present. */
+  collaborators?: string[];
 }
 
 export type ProjectFrontmatter = SoftwareProject | ResearchProject;
@@ -121,10 +122,16 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
   if (!isNonEmptyString(data.lab)) {
     throw new ProjectValidationError(file, `kind "research" requires a non-empty "lab" field`);
   }
-  if (!isStringArray(data.collaborators)) {
-    throw new ProjectValidationError(file, `kind "research" requires a string[] "collaborators" field`);
+  // Optional — omit entirely for solo projects rather than faking an entry.
+  if ("collaborators" in data && !isStringArray(data.collaborators)) {
+    throw new ProjectValidationError(file, `"collaborators" must be a string[] if present`);
   }
-  return { ...base, kind: "research", lab: data.lab, collaborators: data.collaborators };
+  return {
+    ...base,
+    kind: "research",
+    lab: data.lab,
+    collaborators: data.collaborators as string[] | undefined,
+  };
 }
 
 let cache: Project[] | null = null;

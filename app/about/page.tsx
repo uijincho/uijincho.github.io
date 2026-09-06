@@ -3,7 +3,7 @@ import Link from "next/link";
 import { TYPE } from "@/lib/design/type-scale";
 import { PhotoFrame } from "@/components/frames/PhotoFrame";
 import { ContactIcons } from "@/components/ContactIcons";
-import { PlainExperienceEntry, FeaturedExperienceEntry } from "@/components/about/ExperienceEntry";
+import { ExperienceEntry } from "@/components/about/ExperienceEntry";
 import { EXPERIENCE } from "@/content/experience";
 import { SITE_URL } from "@/lib/site";
 
@@ -92,13 +92,9 @@ export default function About() {
           <div className="order-4 md:order-none">
             <h2 className={TYPE.meta}>Experience</h2>
             <ul className="mt-4 flex flex-col gap-3">
-              {EXPERIENCE.map((item, i) =>
-                item.featured ? (
-                  <FeaturedExperienceEntry key={i} {...item} />
-                ) : (
-                  <PlainExperienceEntry key={i} {...item} />
-                ),
-              )}
+              {EXPERIENCE.map((item, i) => (
+                <ExperienceEntry key={i} {...item} />
+              ))}
             </ul>
           </div>
         </div>

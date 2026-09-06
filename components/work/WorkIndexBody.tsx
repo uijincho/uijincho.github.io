@@ -1,6 +1,6 @@
 import { getProjectsByKind } from "@/lib/projects";
 import { TYPE } from "@/lib/design/type-scale";
-import { CategoryNav } from "@/components/work/CategoryNav";
+import { WorkSidebar } from "@/components/work/WorkSidebar";
 import { ProjectSection } from "@/components/work/ProjectSection";
 import { WorkFilter } from "@/components/work/WorkFilter";
 
@@ -44,10 +44,7 @@ export function WorkIndexBody() {
 
         <div className="mt-12 md:grid md:grid-cols-[180px_1fr] md:gap-16">
           <aside className="hidden md:block">
-            <div className="sticky top-24 flex flex-col gap-10">
-              <CategoryNav kind="software" projects={software} />
-              <CategoryNav kind="research" projects={research} />
-            </div>
+            <WorkSidebar software={software} research={research} />
           </aside>
 
           <WorkFilter>

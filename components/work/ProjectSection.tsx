@@ -61,7 +61,15 @@ export function ProjectSection({ kind, projects }: { kind: ProjectKind; projects
               </div>
 
               <div className="md:w-72 md:flex-none">
-                <FlatFrame src={p.thumbnail} alt={`${p.title} — preview`} width={180} height={112} fluid className="w-full" />
+                <FlatFrame
+                  src={p.thumbnail}
+                  alt={`${p.title} — preview`}
+                  width={180}
+                  height={112}
+                  fluid
+                  whiteBg
+                  className="w-full"
+                />
               </div>
             </Link>
           </li>

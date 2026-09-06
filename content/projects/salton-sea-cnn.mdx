@@ -3,29 +3,57 @@ title: "Salton Sea CNN"
 slug: "salton-sea-cnn"
 kind: "research"
 order: 6
-summary: "PLACEHOLDER SUMMARY — one line, under 90 characters, replace me."
+summary: "CNN to detect high hydrogen sulfide events in the Salton Sea from satellite imagery"
 role: "Undergraduate researcher"
-timeline: "2025 – present"
-tags: ["Machine Learning", "Remote Sensing"]
-lab: "PLACEHOLDER Lab Name"
-collaborators: ["PLACEHOLDER Advisor Name", "PLACEHOLDER Collaborator Name"]
+timeline: "Jun 2026 – present"
+tags: ["Deep Learning", "Computer Vision", "Supercomputing", "Climate Science"]
+lab: "Freilich Lab"
+collaborators: ["Mara Freilich", "Alejandra Lopez"]
 links:
-  paper: "https://arxiv.org/placeholder-one"
-  code: "https://github.com/uijincho/placeholder-research-one"
-thumbnail: "/images/projects/placeholder-research-one-1.jpg"
+  site: "https://saltonseascience.org/"
+thumbnail: "/images/projects/saltonsea.png"
 featured: true
 ---
 
-**This is placeholder content.** Replace this entire file with a real research writeup before launch.
+This summer, I'm working with [Dr. Mara Freilich](https://mara-freilich.github.io/) and Alejandra Lopez (Brown University) and the [Salton Sea Environmental Timeseries Project](https://saltonseascience.org/) to hindcast hydrogen sulfide (H₂S) emissions using satellite imagery of the Salton Sea in southern California.
 
-## Overview
+<Figure src="/images/projects/saltonsea.png" alt="Salton Sea project logo" />
 
-PLACEHOLDER — describe the research question and why it matters, in obviously-fake filler text.
+## Background
 
-## Method
+The Salton Sea is California's largest lake and a major environmental and public health concern. As the lake has shrunk over decades, exposed lakebed and stagnant water have contributed to harmful air quality events — including periodic spikes in hydrogen sulfide, a toxic gas with well-documented health impacts on the surrounding Coachella Valley communities. Monitoring these emissions is difficult: ground-level sensors only capture H₂S under specific conditions, leaving substantial gaps in the historical record.
 
-PLACEHOLDER paragraph about the dataset and modeling approach.
+Others in my lab had previously developed machine learning models that classify individual days as high- or low-emission events using these sensor readings, but coverage was limited to certain wind conditions. My role is to extend this work by training convolutional neural networks (CNNs) on multispectral satellite imagery as a spatial proxy for H₂S, enabling hindcasting across more dates.
+
+## Data Pipeline
+
+I built an end-to-end pipeline that processes raw multispectral satellite imagery through cloud masking, area-of-interest clipping, and band stacking into analysis-ready arrays covering the full Salton Sea at high spatial resolution. Labels are assigned by joining satellite dates with H₂S sensor readings, using a threshold to define high-emission events.
+
+
+## Model
+
+The core model is a lightweight CNN designed to operate on the full spatial extent of the Salton Sea across four spectral bands. It was trained on Brown's supercomputer [Oscar](https://docs.ccv.brown.edu/oscar) using PyTorch, with chronologically structured train/val/test splits.
 
 ## Results
 
-PLACEHOLDER paragraph summarizing findings. This section is long-form prose and should read comfortably at length once real content replaces this filler.
+The best-performing models suggest that surface conditions visible from space are meaningfully predictive of H₂S events in the days that follow. Performance was evaluated using AUC-ROC on a held-out chronological test set.
+
+<Figure src="/images/projects/roc-curves.png" alt="ROC curves" />
+
+## Interpretability: Saliency Maps
+
+A key component of this work is understanding where in the satellite image the model is looking. I computed multiple types of saliency maps (vanilla, guided, gradcam) for positive test samples to investigate which physical features of the lake surface drive predictions.
+
+<Figure
+  src="/images/projects/saliency-analysis.png"
+  alt="Saliency map methods analysis"
+  caption="Three saliency methods (vanilla, guided, gradcam) applied to a true positive prediction, revealing which spatial regions most influence the model's output."
+/>
+
+I also compared saliency hotspots against domain-specific spectral indices to probe what physical signal the model may be attending to — connecting model behavior back to hypotheses about H₂S precursors in the lake.
+
+<Figure src="/images/projects/spectral-index-comparison.png" alt="Spectral index vs saliency" />
+
+## What's Next
+
+Current efforts are focused on further optimizing model performance and refining predictions to be more actionable for community partners. This project represents my first end-to-end deep learning pipeline — from raw satellite data through model training, evaluation, and spatial interpretability — and I'm proud of how much ground it has covered.

@@ -17,6 +17,14 @@ interface FlatFrameProps {
    * part of the grid layout.
    */
   fluid?: boolean;
+  /**
+   * Underlays a solid white backing sized exactly to the image (not the
+   * whole figure — a caption below stays on the page's own background).
+   * Default for /work index thumbnails (see ProjectSection): several
+   * project thumbnails are logos/diagrams with transparent PNG backgrounds,
+   * which otherwise show the page's cream/grain texture bleeding through.
+   */
+  whiteBg?: boolean;
 }
 
 /**
@@ -29,12 +37,24 @@ interface FlatFrameProps {
  * that separation is what stops a screenshot from ending up in a polaroid
  * by accident.
  */
-export function FlatFrame({ src, alt, width, height, caption, className = "", fluid = false }: FlatFrameProps) {
+export function FlatFrame({
+  src,
+  alt,
+  width,
+  height,
+  caption,
+  className = "",
+  fluid = false,
+  whiteBg = false,
+}: FlatFrameProps) {
   const { src: resolvedSrc, isPlaceholder } = resolveImage(src);
   const fluidStyle = fluid ? { maxWidth: "100%", width: "100%", aspectRatio: `${width} / ${height}` } : undefined;
 
   return (
-    <figure className={`inline-block border border-rule ${className}`} style={fluid ? { maxWidth: "100%" } : undefined}>
+    // `table` (not `inline-block`) so mx-auto actually centers this: a
+    // shrink-wrapped block-level box supports auto margins for centering,
+    // an inline-level one doesn't (its auto margins compute to 0).
+    <figure className={`table mx-auto border border-rule ${className}`} style={fluid ? { maxWidth: "100%" } : undefined}>
       {isPlaceholder ? (
         // grain here only, not on the outer <figure> — this branch is
         // the sole flat-fill surface FlatFrame ever shows (the real-image
@@ -49,14 +69,26 @@ export function FlatFrame({ src, alt, width, height, caption, className = "", fl
           {PLACEHOLDER_LABEL}
         </div>
       ) : (
-        <Image
-          src={resolvedSrc as string}
-          alt={alt}
-          width={width}
-          height={height}
-          className="block"
-          style={fluid ? { maxWidth: "100%", width: "100%", height: "auto" } : undefined}
-        />
+        // Sized to the image's own rendered box, not the `width`/`height`
+        // props — those are just next/image's required intrinsic hint
+        // (and the placeholder's assumed aspect ratio above); the real
+        // image is very often a different shape. In fixed mode next/image
+        // renders at exactly width×height, so that matches. In fluid mode
+        // the image is width:100% height:auto (its true aspect ratio), so
+        // the wrapper gets no height/aspectRatio of its own — a div with
+        // one block child and no explicit height just hugs that child's
+        // real rendered height. Never the outer figure, so a caption below
+        // stays off the white backing.
+        <div className={whiteBg ? "bg-white" : undefined} style={fluid ? { width: "100%" } : { width, height }}>
+          <Image
+            src={resolvedSrc as string}
+            alt={alt}
+            width={width}
+            height={height}
+            className="block"
+            style={fluid ? { maxWidth: "100%", width: "100%", height: "auto" } : undefined}
+          />
+        </div>
       )}
       {caption ? (
         <figcaption className="border-t border-rule px-2 py-1 text-left font-mono text-[11px] uppercase tracking-wide text-ink-muted">

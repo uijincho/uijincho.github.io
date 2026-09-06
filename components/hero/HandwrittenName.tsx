@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { JetBrains_Mono } from "next/font/google";
 
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
@@ -86,18 +87,22 @@ export function HandwrittenName({ as = "h1" }: HandwrittenNameProps) {
   const Tag = as;
   return (
     <Tag className={`${mono.className} identity-mark text-[36px] leading-none text-accent tracking-tight`}>
-      <span className="sr-only">{NAME}</span>
-      <span aria-hidden="true" className="relative inline-block align-bottom">
-        <span className="invisible whitespace-nowrap">{NAME}</span>
-        <span className="identity-typewriter absolute inset-0 h-11 overflow-hidden whitespace-nowrap">
-          {NAME}
+      {/* The name doubles as the site's "home base" link — /about, not /
+          (this hero already sits on /). Nested inside the h1 rather than
+          replacing it, so the one-h1-per-page heading survives. */}
+      <Link href="/about">
+        <span className="sr-only">{NAME}</span>
+        <span aria-hidden="true" className="relative inline-block align-bottom">
+          <span className="invisible whitespace-nowrap">{NAME}</span>
+          <span className="identity-typewriter absolute inset-0 h-11 overflow-hidden whitespace-nowrap">
+            {NAME}
+          </span>
         </span>
-      </span>
-      {/* A drawn bar, not a "|" glyph — a monospace character cell carries
-          its own side-bearing, which reads as a gap between the name and
-          the cursor. This sits flush against the last character instead. */}
-      <span aria-hidden="true" className="identity-cursor inline-block h-[0.75em] w-[3px] bg-current align-bottom" />
-
+        {/* A drawn bar, not a "|" glyph — a monospace character cell carries
+            its own side-bearing, which reads as a gap between the name and
+            the cursor. This sits flush against the last character instead. */}
+        <span aria-hidden="true" className="identity-cursor inline-block h-[0.75em] w-[3px] bg-current align-bottom" />
+      </Link>
     </Tag>
   );
 }

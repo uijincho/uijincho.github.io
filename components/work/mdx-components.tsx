@@ -81,6 +81,19 @@ export const mdxComponents = {
     if (typeof src !== "string") return null;
     return <FlatFrame src={src} alt={alt ?? ""} width={800} height={500} fluid className="my-6" />;
   },
+  // Raw <video> tags authored directly in MDX (no dedicated Video
+  // component exists yet). block + mx-auto centers it the same way
+  // FlatFrame centers images — max-w-full keeps a wide source from
+  // overflowing the prose column.
+  video: (props: ComponentProps<"video">) => (
+    <video className="mx-auto my-6 block max-w-full" {...props} />
+  ),
+  // <iframe> covers both current uses in content/projects — YouTube video
+  // embeds and the PDF poster viewer — so it gets the same default
+  // centering as img/video.
+  iframe: (props: ComponentProps<"iframe">) => (
+    <iframe className="mx-auto my-6 block max-w-full" {...props} />
+  ),
 
   // Custom components authors use directly in MDX bodies — see each
   // component's own file for its spec. Without these every project page

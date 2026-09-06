@@ -236,7 +236,7 @@ export function NotebookHero() {
               <p className={TYPE.meta}>Portfolio 2026</p>
               <HandwrittenName />
               <p className={`${TYPE.body} mt-4 text-ink`}>
-                applied math + computer science @ Brown
+                Applied Math + Computer Science @ Brown
               </p>
               <div className="mt-6 border-t border-rule pt-4">
                 <a href="#section-software" className="group flex items-baseline justify-between">
@@ -255,7 +255,7 @@ export function NotebookHero() {
             </div>
             <div>
               <ContactIcons />
-              <p className="mt-8 font-mono text-[11px] uppercase tracking-wide text-ink-muted">
+              <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-wide text-ink-muted">
                 Scroll to turn the page
               </p>
             </div>

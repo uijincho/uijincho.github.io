@@ -32,10 +32,12 @@ export function ProjectMeta({ project }: { project: Project }) {
             <dt className={TYPE.meta}>Lab</dt>
             <dd className="mt-1 font-sans text-ink">{project.lab}</dd>
           </div>
-          <div className="col-span-2 sm:col-span-3">
-            <dt className={TYPE.meta}>Collaborators</dt>
-            <dd className="mt-1 font-sans text-ink">{project.collaborators.join(", ")}</dd>
-          </div>
+          {project.collaborators && project.collaborators.length > 0 ? (
+            <div className="col-span-2 sm:col-span-3">
+              <dt className={TYPE.meta}>Collaborators</dt>
+              <dd className="mt-1 font-sans text-ink">{project.collaborators.join(", ")}</dd>
+            </div>
+          ) : null}
         </>
       )}
 
@@ -46,6 +48,7 @@ export function ProjectMeta({ project }: { project: Project }) {
             <>
               <MetaLink href={project.links.repo} accentClass={accentClass} label="Repo" />
               <MetaLink href={project.links.demo} accentClass={accentClass} label="Live demo" />
+              <MetaLink href={project.links.source} accentClass={accentClass} label="Source" />
             </>
           ) : (
             <>

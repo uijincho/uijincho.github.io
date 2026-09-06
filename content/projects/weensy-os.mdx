@@ -3,24 +3,58 @@ title: "WeensyOS"
 slug: "weensy-os"
 kind: "software"
 order: 4
-summary: "Generate a 3D-printable lithophane STL from an image"
+summary: "A teaching os kernel implementing virtual memory, process isolation, and fork/exit"
 role: "Frontend lead, team of 4"
-timeline: "Hackathon, 2025"
-tags: ["React", "WebSockets", "Node"]
-stack: ["React", "Node.js", "Socket.IO"]
+timeline: "Spring 2026"
+tags: ["Operating Systems", "Virtual Memory", "Kernel"]
+stack: ["C/C++", "x86-64"]
 links:
-  repo: "https://github.com/uijincho/placeholder-four"
-  demo: "https://placeholder-four.example.com"
-thumbnail: "/images/projects/placeholder-software-four-1.jpg"
+  source: "https://csci0300.github.io/assign/projects/project4.html"
+thumbnail: "/images/projects/weensyos.png"
 featured: false
 ---
 
-**This is placeholder content.** Replace this entire file with a real project writeup before launch.
+## Background
 
-## Overview
+WeensyOS is a small teaching operating system built around 2MB of physical memory and 3MB of virtual memory, used in CS 300 (Brown's operating systems course) to teach virtual memory from the kernel side rather than the application side. The handout version starts in a broken state on purpose: every process and the kernel itself share a single page table, so there is no isolation between processes, and none between user processes and the kernel. Any process can read or write kernel memory, and any process can read or write any other process's memory. The assignment is to fix this, piece by piece, by writing the actual page-table and process-management logic that a real kernel needs.
 
-PLACEHOLDER — describe the problem this project solved in 36 hours.
+All of the implementation work lives in a single file, `kernel.cc`, which is what makes the project interesting: the surrounding stencil (bootloader, hardware interface, the on-screen physical/virtual memory visualizer) is substantial, but the actual operating system logic you write is compact and has to be conceptually correct, since a kernel bug doesn't throw a clean stack trace, it crashes the emulated machine.
 
-## What I built
+## Kernel Isolation
 
-PLACEHOLDER paragraph about the real-time collaboration feature.
+The first step was making kernel memory inaccessible to user processes. In the handout, `kernel_pagetable` is shared by everyone, so a user process can freely write into kernel code and data. I restructured the mappings so that pages below `PROC_START_ADDR` (0x100000), aside from the single console page at `CONSOLE_ADDR` that every process needs read/write access to for printing, are marked kernel-only and unreachable from user mode. This is the property that makes the rest of the OS trustworthy: without it, a malicious or buggy process could overwrite kernel code and take over the machine.
+
+## Process Isolation
+
+Kernel isolation alone doesn't stop processes from reading and writing each other's memory, since they were still all running against the same page table. I gave each process its own independent page table, built at process creation time from the segments described in its program image, so process 1's memory mappings are invisible to process 2 and vice versa. This is where the WeensyOS memory visualizer starts actually showing four distinct, non-overlapping address spaces instead of one shared mess.
+
+## Virtual Page Allocation
+
+Up to this point, every process still used an identity mapping: virtual address X always pointed at physical address X. That's simple but wasteful, since it hard-ties a process's memory layout to physical memory layout and prevents any real memory management. I broke the identity mapping by allocating physical pages through `kalloc` (a kernel-level analog to `malloc`) and mapping them to whatever virtual address a process actually needs via `sys_page_alloc`, so a process's virtual address no longer has to correspond to the same physical address.
+
+## Overlapping Virtual Address Spaces
+
+With processes isolated and no longer identity-mapped, there was no reason for them to keep using disjoint virtual address ranges, a holdover from when they were really sharing physical memory. I changed process address spaces so each one can use the same virtual addresses (and the same amount of virtual address space) as every other process, backed by different physical pages. This is the step where virtual memory actually starts paying for itself: processes stop being artificially boxed into distinct regions of a shared physical layout.
+
+## Fork
+
+I implemented `syscall_fork`, WeensyOS's version of the `fork()` system call: it duplicates the calling process's entire address space and register state into a new process, returns 0 in the child and the child's process ID in the parent, and fails gracefully (returning an error to the caller rather than crashing) if there isn't enough free memory to complete the duplication. Getting the "returns twice" semantics right, and copying page-table entries correctly rather than just pointers, was the trickiest part of this step.
+
+## Shared Read-Only Memory
+
+Naively, `fork` copies every page of the parent's memory into the child, which is wasteful for the code and read-only data segments that a process almost never modifies. I added support for sharing those pages directly between parent and child instead of duplicating them, using reference counting on physical pages so a shared page is only freed once nothing maps it anymore. The memory visualizer surfaces these as "S" (shared) pages, which is the easiest way to confirm the optimization is actually working rather than silently falling back to a full copy.
+
+## Exit and Freeing Memory
+
+The last step was implementing `syscall_exit`, so a process can terminate cleanly: freeing every physical page it owns (or decrementing the reference count on pages it shares), releasing its process table slot, and making sure a parent whose child has exited doesn't leave dangling references behind. This closes the loop that fork opens: a system that can create processes but never reclaim their memory eventually runs out of physical pages entirely, which is exactly what the `p-exit.cc` stress test (processes forking, allocating, and exiting in a loop) is designed to catch.
+
+## How I Verified It
+
+WeensyOS ships with no automated test suite for this project; correctness is checked visually against the on-screen physical and virtual memory display, which renders each 4KiB page as a character and color-codes ownership and access permissions. I confirmed each step against the reference behavior: kernel pages disappearing from user-accessible view after Step 1, four distinct non-overlapping address spaces after Step 2, physical pages no longer identity-mapped after Step 3, overlapping virtual ranges across processes after Step 4, correct parent/child duplication under `p-fork.cc` after Step 5, "S" pages appearing for shared code segments after Step 6, and stable, non-leaking memory under the fork/alloc/exit stress test in `p-exit.cc` after Step 7.
+
+## What It Involved
+
+- **Language**: C++, kernel-level (no standard library, no dynamic allocation beyond `kalloc`)
+- **Environment**: QEMU (x86-64 emulation), run and debugged inside a Docker container
+- **Core concepts**: page tables, virtual-to-physical address translation, user/kernel privilege separation, process lifecycle (fork/exit), reference-counted physical pages
+- **Debugging tools**: `log_printf` to a log file (the kernel has no console for print debugging in the usual sense), GDB attached to the running QEMU instance, and manual disassembly (`obj/kernel.asm`) to map faulting instruction addresses back to source when a panic's backtrace had no symbol information

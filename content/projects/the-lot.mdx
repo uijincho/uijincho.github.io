@@ -5,26 +5,57 @@ kind: "software"
 order: 3
 summary: "Drum Corps International audition database & RAG chat bot"
 role: "Solo developer"
-timeline: "Winter 2025"
-tags: ["Full-Stack", "AI", "Database"]
+timeline: "Summer 2026"
+tags: ["Full-Stack", "AI", "Databases", "RAG"]
 stack: ["Python", "FastAPI", "PostgreSQL", "pgvector", "OpenAI API"]
 links:
-  repo: "https://github.com/uijincho/placeholder-three"
-  demo: "https://apps.apple.com/placeholder"
+  repo: "https://github.com/uijincho/the-lot"
 thumbnail: "/images/projects/the-lot.png"
 featured: true
 ---
 
-**This is placeholder content.** Replace this entire file with a real project writeup before launch.
+## Background
 
-## Overview
+Drum Corps International (DCI) audition season is scattered across dozens of corps websites, PDFs, and social media posts, with no single place to compare programs, track audition dates, or figure out which corps actually fit a candidate's instrument, experience, and travel range. I built The Lot to fix that: an AI-powered audition hub named after *the lot*, the iconic warm-up space at DCI events where members and fans gather before and after shows.
 
-PLACEHOLDER — describe the problem this project solved.
+The goal was to give candidates one dashboard to browse corps, see audition dates, get a personalized match ranking, and ask an AI assistant anything about the audition process, instead of piecing that information together by hand.
 
-## What I built
+## Personalized Recommendations
 
-PLACEHOLDER paragraph describing the mobile app and its on-device ML pipeline.
+The core of the dashboard is a recommendation engine. Candidates fill out a short profile (instrument, experience level, and which states they'd be willing to travel to), and every corps card is ranked and annotated with a match percentage based on that profile. Corps are also split into World Class and Open Class sections so candidates can browse the division that fits their goals, and a state filter narrows results down to corps that actually hold auditions somewhere within reach.
 
-### A subsection
+For 2026, I sourced the earliest announced audition date for every World Class corps from the official FloMarching schedule and surfaced it directly on each corps card, so candidates know when to start preparing without digging through external calendars. Experienced marchers can also log their corps history (every corps marched and the year), which shows up on their profile.
 
-PLACEHOLDER — MDX heading depth check.
+## Lucas: AI Chat Assistant
+
+Alongside the dashboard is Lucas, a floating chat widget built on GPT-4o mini that answers open-ended questions about DCI: audition prep, what to expect at camps, tour life, instrument-specific tips, and corps culture. When a candidate has filled out their profile, Lucas personalizes its answers to their instrument, experience level, corps history, and location rather than giving generic advice.
+
+Where corps documents have been ingested into the knowledge base, Lucas answers from them directly and cites specific details rather than guessing. Chat history persists across sessions: logged-in users sync it to the cloud, and guests keep it locally in the browser.
+
+## Accounts and Onboarding
+
+Auth is handled with JWT-based sign-up and login, so profiles and chat history follow a candidate across devices. First-time visitors go through a short onboarding flow covering name, instrument, age, experience level, and target states, and everything is editable afterward on the Profile page, with recommendations updating immediately when details change.
+
+## Architecture
+
+The frontend is a React + TypeScript app built with Vite and styled with Tailwind CSS. The backend is a FastAPI service backed by PostgreSQL with the pgvector extension, which stores document embeddings for Lucas's retrieval-augmented answers. Embeddings are generated with OpenAI's `text-embedding-3-small`, and response generation uses `gpt-4o-mini`.
+
+The frontend deploys to Vercel and the backend to Railway, with Railway also hosting the managed Postgres instance. Locally, Postgres with pgvector runs in Docker via `docker compose up -d`, and the API is documented interactively through FastAPI's built-in Swagger UI.
+
+## API Surface
+
+The backend exposes a REST API covering:
+
+- **Auth**: register, login, get and update the current user's profile
+- **Corps**: list all corps, fetch a single corps by ID
+- **Chat**: a RAG-backed question-answering endpoint that accepts optional user context for personalization
+- **Conversations**: fetch or clear a user's saved chat history
+- **Documents**: upload a PDF or `.txt` file into the knowledge base for Lucas to draw on
+
+## Data Seeding
+
+Corps data, including the full 2026 audition date set, is seeded from a SQL file (`seed.sql`) run against the local or live database. A standalone patch script (`patch_audition_dates.sql`) lets audition dates be updated on the live Railway database directly through its query editor, without a full re-seed, as dates get confirmed or change closer to audition season.
+
+## What's Next
+
+The current version covers the full candidate-facing loop: browse, filter, get matched, and ask Lucas questions. Next steps include expanding the knowledge base with more corps-specific documents so Lucas's answers get more specific and grounded, and continuing to keep the 2026 audition date data current as more corps finalize their schedules.

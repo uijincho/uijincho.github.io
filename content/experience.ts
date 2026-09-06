@@ -5,13 +5,6 @@ export interface ExperienceItem {
   start: string;
   /** "PRESENT" or an end date in the same style as `start`. */
   end: string;
-  /**
-   * Drives which of the two entry treatments (components/about/ExperienceEntry.tsx)
-   * renders — plain (raised fill + hairline) vs. featured (solid ink border, no
-   * fill). Optional and un-enforced: nothing here requires exactly one `true`,
-   * that's just the typical usage.
-   */
-  featured?: boolean;
 }
 
 /**
@@ -29,7 +22,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     org: "Brown University — Freilich Lab",
     start: "Jun 2026",
     end: "PRESENT",
-    featured: true,
   },
   {
     role: "Software Engineer Intern",
