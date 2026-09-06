@@ -5,20 +5,11 @@ import type { Project } from "@/lib/projects";
 import { CategoryNav } from "@/components/work/CategoryNav";
 
 /**
- * Owns the ONE shared "you are here" pick across both tracks' CategoryNav
- * sidebars. A single IntersectionObserver watches every project <li> from
- * BOTH software and research (ProjectSection gives each one id={slug}),
- * so there is exactly one activeSlug for the whole sidebar — never one per
- * track. Letting each CategoryNav run its own observer (the earlier
- * approach) could highlight a software row and a research row at once
- * whenever both trailed into the reading band near a section boundary;
- * hoisting the observer up here and threading a single `activeSlug` down
- * as a prop is what actually guarantees "one highlighted project total."
- *
- * Among items simultaneously intersecting the reading band, the one
- * earliest in page order (software first, then research — matching
- * render order below) wins, rather than whichever the browser happens to
- * report first in the observer callback.
+ * Tracks the single active project across both CategoryNav sidebars.
+ * One IntersectionObserver watches every project element from both
+ * software and research, so exactly one activeSlug is highlighted at a
+ * time. Among items intersecting the reading band at once, the one
+ * earliest in page order wins.
  */
 export function WorkSidebar({ software, research }: { software: Project[]; research: Project[] }) {
   const [activeSlug, setActiveSlug] = useState<string | null>(null);

@@ -11,14 +11,7 @@ interface PhotoFrameProps {
   caption?: string;
   /** Index into the shared ROTATIONS array — never a random value. */
   rotationIndex: number;
-  /**
-   * Set false to render dead flat (no transform at all, not even
-   * rotate(0deg)) instead of the ROTATIONS-derived tilt. The 1-3deg
-   * magnitude in lib/design/rotation.ts is "never 0, per spec" as the
-   * DEFAULT scattered-photo look — this is the deliberate, explicit
-   * opt-out for a call site that wants a square-on portrait instead,
-   * not a silent contradiction of that rule.
-   */
+  /** Set false to render flat, with no rotation transform at all. */
   rotate?: boolean;
   /** Shadow intensity multiplier; 1 = resting. Higher lifts it further off the page. */
   elevation?: number;
@@ -26,23 +19,9 @@ interface PhotoFrameProps {
 }
 
 /**
- * The site's PHOTOGRAPH treatment: cream frame, bottom-weighted caption
- * padding, fixed rotation (from ROTATIONS, via rotationIndex), single-
- * light-source drop shadow (from LIGHT, via shadowFor), grain (from the
- * shared `grain` class, globals.css).
- *
- * `grain` sits on this whole outer <figure> — one layer covers both the
- * real-photo branch and the placeholder branch below without duplicating
- * anything per-branch, since it's painted after (on top of) whichever one
- * renders. `relative` added alongside it: this figure was `inline-block`
- * only before, no positioning context of its own for grain's ::after to
- * size against.
- *
- * For real photographs only — me, workspace, lab. Never for screenshots
- * or diagrams; those use FlatFrame. This is a deliberately separate
- * component from FlatFrame, not a `variant` prop on one shared component —
- * that separation is what stops a screenshot from ending up in a polaroid
- * by accident.
+ * Photograph frame: cream frame, bottom-weighted caption padding, fixed
+ * rotation (from ROTATIONS), drop shadow (from LIGHT), grain texture.
+ * For real photographs only; screenshots/diagrams use FlatFrame.
  */
 export function PhotoFrame({
   src,

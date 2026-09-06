@@ -2,12 +2,8 @@ import type { ReactNode } from "react";
 
 /**
  * MDX component: <PullQuote>...</PullQuote> — large Newsreader italic,
- * hairline rule above and below.
- *
- * MDX wraps block content inside a JSX component's children in its own
- * <p> (via the global `p` override in mdx-components.tsx), which would
- * otherwise fight this component's sizing. The [&>p]:... overrides force
- * that nested <p> to match rather than compete.
+ * hairline rule above and below. The [&>p]:... overrides force MDX's
+ * auto-wrapped nested <p> to match this component's own sizing.
  */
 export function PullQuote({ children }: { children: ReactNode }) {
   return (

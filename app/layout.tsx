@@ -19,18 +19,8 @@ const inter = Inter({
   weight: ["400", "500"],
 });
 
-// Long-form article body INSIDE MDX ONLY — not for interface text.
-// Kept as its own token (--font-serif) so it can't drift into UI copy.
-// `preload: false`: next/font preloads based on where the loader is
-// CALLED, not on whether a given route actually renders font-serif text —
-// since this call lives in the root layout (every route goes through it),
-// the default would inject a <link rel=preload> for Newsreader on `/` and
-// `/work` too, neither of which ever renders it. Lighthouse's LCP "Render
-// Delay" phase on `/` (mobile) confirmed this: an unused normal+italic
-// font family was competing for early network priority against resources
-// the page actually needed. `/about` and `/work/[slug]` (the only routes
-// that use font-serif) still get it via the normal @font-face
-// fetch-on-use path — just not preloaded ahead of render everywhere else.
+// Long-form article body inside MDX only. `preload: false` avoids
+// preloading this font on routes that don't render it.
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
@@ -46,12 +36,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 const DESCRIPTION = "Software engineering + research portfolio.";
 
-// metadataBase resolves every relative OG/twitter image URL (and the
-// canonical URLs below) against SITE_URL — without it Next.js falls back
-// to a localhost origin, which was the pre-existing `next build` warning
-// this fixes. title.template means child routes only need to set their
-// own short title (e.g. "Work") — this suffixes " — Uijin Cho" once,
-// centrally, instead of every route hardcoding the full string itself.
+// metadataBase resolves relative OG/twitter image and canonical URLs
+// against SITE_URL. title.template appends the site suffix to each
+// route's short title.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -79,14 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${inter.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      {/* relative + grain: the actual base-page-background texture
-          (globals.css) lives here, not on any per-route wrapper — this is
-          the one element background-color: var(--color-base) is set on,
-          so it's the only element that's genuinely full-page-width at
-          every viewport, including past any route's own max-w cap. See
-          .grain's own comment in globals.css for why <main>/<footer>
-          each still need `relative` (without their own `grain`) for this
-          to paint behind their real content instead of over it. */}
+      {/* The base page background texture (globals.css `.grain`) lives on body. */}
       <body className="relative min-h-full flex flex-col grain">
         <SiteNav />
         {children}

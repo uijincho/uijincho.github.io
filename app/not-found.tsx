@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { TYPE } from "@/lib/design/type-scale";
 
-// Next.js convention: app/not-found.tsx replaces the framework's default
-// 404 for any unmatched route, plus any explicit notFound() call (see
-// app/work/[slug]/page.tsx). Base background (bg-base, same as every other
-// page — no special treatment), one line of copy in the site's voice, and
-// links back to the two real destinations rather than a dead end.
+// 404 page: replaces the framework default for any unmatched route or explicit notFound() call.
 export default function NotFound() {
   return (
     <main className="flex min-h-[calc(100vh-4.5rem)] flex-col items-center justify-center bg-base px-6 text-center">

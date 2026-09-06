@@ -11,6 +11,7 @@ interface ProjectLinksBase {
   demo?: string;
   paper?: string;
   code?: string;
+  source?: string;
 }
 
 interface ProjectFrontmatterBase {
@@ -21,10 +22,7 @@ interface ProjectFrontmatterBase {
   role: string;
   timeline: string;
   tags: string[];
-  // One image per project. Reverted from a `thumbnails: [string, string]`
-  // tuple (Stage 2) back to this original singular field — see the /work
-  // index layout, which now shows a single image beside each entry
-  // instead of two thumbnails below it.
+  // One image per project, shown beside its entry on the /work index.
   thumbnail: string;
   featured: boolean;
   links: ProjectLinksBase;
@@ -65,9 +63,7 @@ function isStringArray(v: unknown): v is string[] {
 /**
  * Validates raw frontmatter (parsed as `unknown` by gray-matter) into a
  * typed ProjectFrontmatter, throwing a descriptive error on the first
- * problem found. Placeholder content is expected to be obviously fake, but
- * it must still be structurally valid — this is not optional even for
- * placeholders, since Stage 5's layout branches on `kind`.
+ * problem found.
  */
 function validateFrontmatter(file: string, data: Record<string, unknown>): ProjectFrontmatter {
   const required: [string, (v: unknown) => boolean][] = [
@@ -122,7 +118,7 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
   if (!isNonEmptyString(data.lab)) {
     throw new ProjectValidationError(file, `kind "research" requires a non-empty "lab" field`);
   }
-  // Optional — omit entirely for solo projects rather than faking an entry.
+  // Optional — omitted for solo projects.
   if ("collaborators" in data && !isStringArray(data.collaborators)) {
     throw new ProjectValidationError(file, `"collaborators" must be a string[] if present`);
   }
@@ -137,11 +133,7 @@ function validateFrontmatter(file: string, data: Record<string, unknown>): Proje
 let cache: Project[] | null = null;
 
 function loadAllProjects(): Project[] {
-  // NOTE: this in-memory cache is fine in production (generateStaticParams
-  // runs it once per `next build`) but means content/projects/*.mdx edits
-  // are NOT picked up by a long-running `next dev` process — .mdx files
-  // aren't part of the Turbopack module graph, so Fast Refresh doesn't
-  // invalidate this. Restart `next dev` after editing content files.
+  // In-memory cache; restart `next dev` after editing content/projects/*.mdx.
   if (cache) return cache;
 
   const files = fs.readdirSync(PROJECTS_DIR).filter((f) => f.endsWith(".mdx"));

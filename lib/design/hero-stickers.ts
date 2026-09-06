@@ -2,49 +2,23 @@ export interface HeroSticker {
   src: string;
   label: string;
   href: string | null;
-  /**
-   * Only used when href is set — completes the accessible name as
-   * "{label}, opens {destination}" (e.g. "Badminton, opens my match log").
-   * Kept separate from `label` so the tooltip (which appends its own ↗)
-   * and the aria-label (which needs a fuller sentence) can each use the
-   * right amount of text.
-   */
+  /** Used when href is set, to complete the aria-label as "{label}, opens {destination}". */
   destination?: string;
   /** % of the left page's width, center point of the sticker. */
   x: number;
   /** % of the left page's height, center point of the sticker. */
   y: number;
-  /** % of the left page's WIDTH (not a fixed px size) — the page scales with the viewport, so this must too. See portfolio-hero-sticker-units memory. */
+  /** % of the left page's width (scales with the page, not a fixed px size). */
   size: number;
   rotate: number;
-  /** Which side the tooltip opens toward — "below" for the top band, "above" for the bottom band, so it never runs off the page edge. */
+  /** Which side the tooltip opens toward. */
   tip: "above" | "below";
 }
 
 /**
- * Hobby stickers around the photo stack, left page. Positions are tuned
- * by eye against the page's real dimensions at the current notebook size
- * (measured: ~416x592px at the min(66vw, 850px) cap) — two bands, above
- * and below the stack's hit area (HeroPhotoStack's STACK_HIT_WIDTH /
- * STACK_HIT_HEIGHT, ~200x206px — previously just a comment, now the
- * button's actual enforced size), never in the narrow side margins.
- *
- * Only 4 entries, not 6: of the 5 sticker files that existed in
- * public/images/stickers/, one (reading.png) is a real, copyrighted book
- * cover — excluded, not used as a site asset. The remaining four don't
- * match any hobby-icon naming convention, so labels describe what they
- * actually are rather than inventing a mapping to hobbies that don't
- * exist yet. A mix of linked/unlinked, matching the original spec's
- * intent of exercising both element-type code paths.
- *
- * The above/below separation from the stack's hit area (HeroPhotoStack's
- * STACK_HIT_*, ~200x206px, centered a few px down-right of the page's
- * true center) is vertical only, not horizontal: at y=12/15 (top band)
- * and y=86/83 (bottom band) these stickers sit well outside the hit
- * area's ~34%-69% y-range regardless of x, so x doesn't need its own
- * clearance check. Re-verify this comment's numbers if HERO_STACK_OFFSETS
- * or the card size in HeroPhotoCard ever change — the hit area is derived
- * from those, not from these sticker positions.
+ * Hobby stickers around the photo stack, left page. Positioned in two
+ * bands above and below the stack's hit area (HeroPhotoStack's
+ * STACK_HIT_WIDTH / STACK_HIT_HEIGHT).
  */
 export const HERO_STICKERS: HeroSticker[] = [
   {

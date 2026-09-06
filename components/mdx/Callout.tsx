@@ -4,16 +4,8 @@ type CalloutKind = "note" | "caveat";
 
 /**
  * MDX component: <Callout kind="note|caveat">...</Callout> — tinted
- * block, 3px left border, mono uppercase label. Deliberately neutral:
- * --color-ink-muted only, never an accent — both accents are reserved for
- * track identity (software/research), and a callout isn't either one.
- * This is where honest limitations go (kind="caveat"), so it must read as
- * neutral commentary, not as belonging to a track.
- *
- * Body content renders through the normal global `p`/`ul`/etc overrides
- * (mdx-components.tsx) — same serif prose as the rest of the article, just
- * boxed. [&>*:first-child]:mt-0 cancels the paragraph's own top margin so
- * it doesn't add extra space right under the label.
+ * block, 3px left border, mono uppercase label. Neutral color
+ * (--color-ink-muted), not an accent.
  */
 export function Callout({ kind, children }: { kind: CalloutKind; children: ReactNode }) {
   return (

@@ -6,25 +6,10 @@ import { FlatFrame } from "@/components/frames/FlatFrame";
 
 /**
  * One track's worth of entries in the /work index right column. Carries
- * `data-kind` so the mobile WorkFilter can hide the whole section via CSS
- * (rather than hiding individual entries, which would leave an empty
- * section heading behind when filtered).
+ * `data-kind` so the mobile WorkFilter can hide the whole section.
  *
- * Each entry is a two-part row at desktop width: text (index number +
- * category label, title, one-line summary, tag pills) on the left, one
- * thumbnail on the right — reverted from an earlier two-thumbnail-below
- * layout back to a single image, sitting beside the text rather than
- * under it. `md:flex-row` only kicks in at the md breakpoint; below that
- * it's a plain flex-col, so the image drops under the text at full width
- * on mobile instead of squeezing into a side column too narrow for it.
- * The image column uses FlatFrame's `fluid` mode (scales to its
- * container width, height derived from the same 180:112 aspect ratio the
- * old fixed-size thumbnails used) rather than a fixed pixel size, so its
- * height tracks the column width instead of a hardcoded number — the
- * closest a fluid image gets to "roughly matches the text block's
- * height" without knowing that height in advance. Project thumbnails are
- * visual previews of the project (screenshots/diagrams), never
- * photographs, so this uses FlatFrame, never PhotoFrame.
+ * Each entry is a row: text (index, category, title, summary, tags) on
+ * the left, a thumbnail on the right (stacked below on mobile).
  */
 export function ProjectSection({ kind, projects }: { kind: ProjectKind; projects: Project[] }) {
   const headingId = `section-${kind}`;

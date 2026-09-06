@@ -9,29 +9,14 @@ import { JetBrains_Mono } from "next/font/google";
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
 
 /**
- * The actual /work index content: sticky per-track table of contents
- * (CategoryNav, desktop only) beside the full project listing
- * (ProjectSection per track, WorkFilter collapsing it to a horizontal
- * filter row on mobile). Pulled out of app/work/page.tsx so the same
- * body can be embedded directly on the landing page (Zone 2 — the hero
- * scrolls straight into this, no separate /work navigation required)
- * as well as served at its own route.
+ * The /work index content: sticky per-track table of contents
+ * (WorkSidebar, desktop only) beside the full project listing
+ * (ProjectSection per track, collapsed to a filter row on mobile via
+ * WorkFilter). Shared between the /work route and the landing page.
  *
- * Two nested widths, not one: the OUTER div (max-w-[90rem]) is the wide
- * frame — full breathing room on large monitors, per an earlier explicit
- * "make the work div 20% wider" request. The INNER div (max-w-5xl) is
- * the actual editorial column — sidebar (180px) + gap-16 (64px) + the
- * project listing itself, which tops out well under 5xl's remaining
- * width even at its widest (a 60ch summary line is ~605px). Without
- * this inner cap, the listing's 1fr content column stretched to fill
- * whatever the outer frame left over (over 1100px at wide viewports),
- * and since thumbnails/text don't grow to fill it, everything visible
- * clustered on the left with dead space trailing off to the right —
- * the outer div was centered the whole time, but nothing about that is
- * visible when its content doesn't reach anywhere near its edges.
- * Capping and centering the actual content block (h1 included, so the
- * heading lines up with the grid beneath it) is what makes the page
- * read as centered rather than left-justified at wide viewports.
+ * Two nested widths: the outer div is a wide frame for large monitors;
+ * the inner div caps and centers the actual editorial column so content
+ * doesn't cluster to the left at wide viewports.
  */
 export function WorkIndexBody() {
   const software = getProjectsByKind("software");

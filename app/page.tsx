@@ -8,12 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE_URL },
 };
 
-// JSON-LD Person schema, landing page only (there's exactly one person
-// this site is about — no reason to repeat this on every route). Kept
-// deliberately minimal: only claims backed by data this codebase actually
-// has (name, canonical url). No jobTitle/alumniOf/sameAs — inventing those
-// would put fabricated claims about a real person into structured data
-// search engines index. Add them here once real values exist.
+// JSON-LD Person schema for the landing page.
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -24,34 +19,14 @@ const personJsonLd = {
 export default function Home() {
   return (
     <>
-      {/* Static, locally-defined JSON-LD (see personJsonLd above) — not user input. */}
+      {/* Structured data for search engines. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
-      {/* Wrapped in <main> for two reasons: it's the landmark this route
-          was missing (every other route has exactly one), and — the
-          reason this matters here specifically — it's what makes
-          <WorkIndexBody />'s width/centering match /work exactly.
-          <body> is `flex flex-col` (app/layout.tsx); without this
-          wrapper, WorkIndexBody's own `mx-auto max-w-[90rem]` div was a
-          *direct* flex item of that column flex container, and a flex
-          item with auto cross-axis margins doesn't stretch to fill the
-          line the way a plain block element does — it shrinks to its
-          content width instead (observed ~840px, not the intended
-          1440px-capped-and-centered box), so it rendered narrower and
-          differently-positioned than the exact same component on /work,
-          where it's nested inside <main> (a plain block, not a flex
-          item) and ordinary block-centering math applies. Wrapping both
-          routes' content in <main> the same way makes WorkIndexBody a
-          non-flex-item block child in both places — same containing
-          block, same box-model math, same rendered width and position.
-
-          `relative` (no `grain` here) so this <main> paints in the same
-          CSS stacking category as <body>'s own grain pseudo-element —
-          see .grain's comment in globals.css. Without it, body's grain
-          (a positioned, z-index:auto layer) would paint ABOVE this
-          plain-static <main>'s entire content instead of behind it. */}
+      {/* Landmark for this route, and keeps WorkIndexBody's width/centering
+          matching /work (both nested inside a plain-block <main>, not a
+          flex item directly). `relative` lets body's grain texture
+          (globals.css) show through behind this page. */}
       <main className="relative">
-        {/* Zone 1: the notebook spread, desktop/tablet (md+). Do not attempt
-            to scale this down for mobile — see MobileHeroTodo. */}
+        {/* Zone 1: the notebook spread, desktop/tablet (md+). Mobile uses MobileHeroTodo instead. */}
         <div className="hidden md:block">
           <NotebookHero />
         </div>
@@ -59,10 +34,7 @@ export default function Home() {
           <MobileHeroTodo />
         </div>
 
-        {/* Zone 2: the hero scrolls directly into the full /work index — no
-            separate navigation needed. Also what gives the page real
-            height below the hero, so #hero-sentinel actually leaves the
-            viewport and the SiteNav reveal fires. */}
+        {/* Zone 2: the full /work index, scrolled directly into from the hero. */}
         <WorkIndexBody />
       </main>
     </>

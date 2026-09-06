@@ -2,11 +2,7 @@ import type { Project } from "@/lib/projects";
 import { KIND_ACCENT_TEXT } from "@/lib/design/kind";
 import { TYPE } from "@/lib/design/type-scale";
 
-/**
- * The kind-specific metadata block. Branches on project.kind because
- * software and research projects genuinely need different fields —
- * stack vs lab/collaborators, repo/demo vs paper/code.
- */
+/** Kind-specific metadata block: stack/repo for software, lab/paper for research. */
 export function ProjectMeta({ project }: { project: Project }) {
   const accentClass = KIND_ACCENT_TEXT[project.kind];
 
@@ -18,10 +14,6 @@ export function ProjectMeta({ project }: { project: Project }) {
       </div>
 
       {project.kind === "software" ? (
-        // col-span-2 of the 3-column sm+ grid = 2/3 width, freed up by
-        // dropping Role above (Timeline takes the remaining 1/3). Also
-        // full-width on the 2-column mobile grid, which reads fine for a
-        // comma-joined stack list.
         <div className="col-span-2">
           <dt className={TYPE.meta}>Stack</dt>
           <dd className="mt-1 font-sans text-ink">{project.stack.join(", ")}</dd>

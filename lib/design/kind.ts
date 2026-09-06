@@ -5,15 +5,7 @@ export const KIND_LABEL: Record<ProjectKind, string> = {
   research: "Research",
 };
 
-/**
- * Track accent, used on the category label and index numbers ONLY.
- * Both kinds intentionally share the same hue (--color-support) — per
- * request, software and research read as one identical accent color
- * rather than each track having its own. Individual tag pills
- * deliberately do NOT use this — they stay --color-ink-muted, per the
- * corrected palette note ("tag outlines... uses --color-ink-muted, not a
- * new hue").
- */
+/** Track accent color for category labels and index numbers; both kinds share the same hue. */
 export const KIND_ACCENT_TEXT: Record<ProjectKind, string> = {
   software: "text-support",
   research: "text-support",

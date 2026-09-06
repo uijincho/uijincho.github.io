@@ -8,13 +8,8 @@ import { PullQuote } from "@/components/mdx/PullQuote";
 import { Callout } from "@/components/mdx/Callout";
 
 /**
- * Markdown always wraps a standalone `![]()` in a <p> (images are inline
- * content in HTML semantics), but our img override renders a <figure>
- * (block content) — <p> cannot legally contain block content. Browsers
- * silently close the <p> early to cope, so server and client HTML diverge
- * and React throws a real hydration mismatch (confirmed via console: "In
- * HTML, <figure> cannot be a descendant of <p>"). Detect a paragraph
- * whose only content is an image and skip the <p> wrapper for it.
+ * Detects a paragraph whose only content is an image, so the <p> wrapper
+ * can be skipped (avoids nesting a <figure> inside a <p>).
  */
 function isSoleImageChild(children: React.ReactNode): boolean {
   const childArray = Children.toArray(children);
@@ -25,19 +20,11 @@ function isSoleImageChild(children: React.ReactNode): boolean {
 
 /**
  * Component overrides passed to <MDXRemote components={...} />.
- *
- * Body prose renders in Newsreader (TYPE.bodySerif) — this is the one
- * place on the site that font is allowed, per the type spec ("long-form
- * article body inside MDX only"). Images go through FlatFrame, never
- * next/image directly and never PhotoFrame — MDX images are project
- * screenshots/diagrams, not photographs. Markdown gives no explicit
- * width/height, so these default to an 800x500 (8:5) placeholder ratio;
- * real dimensions can be added once real screenshots exist.
+ * Body prose renders in Newsreader (TYPE.bodySerif). Images go through
+ * FlatFrame at a default 800x500 placeholder ratio.
  */
 export const mdxComponents = {
-  // Defensive downgrade: MDX content should never author a top-level `#`
-  // (the page's own <h1> is the project title), but if it does, render it
-  // as an h2 rather than creating a second h1 on the page.
+  // Renders a top-level `#` as h2, since the page's own h1 is the project title.
   h1: (props: ComponentProps<"h2">) => <h2 className={`${TYPE.heading} mt-10 text-ink`} {...props} />,
   h2: (props: ComponentProps<"h2">) => <h2 className={`${TYPE.heading} mt-10 text-ink`} {...props} />,
   h3: (props: ComponentProps<"h3">) => (
@@ -59,17 +46,11 @@ export const mdxComponents = {
   blockquote: (props: ComponentProps<"blockquote">) => (
     <blockquote className="mt-4 border-l-2 border-rule pl-4 text-ink-muted italic" {...props} />
   ),
-  // Inline `code` gets a small mono chip. The [&>code]:bg-transparent etc.
-  // on `pre` below strips this back off for code nested inside a fenced
-  // block, so block code isn't double-boxed.
+  // Inline `code` gets a small mono chip; stripped back off inside fenced blocks (see `pre` below).
   code: (props: ComponentProps<"code">) => (
     <code className="rounded bg-raised px-1 py-0.5 font-mono text-[0.85em] text-ink" {...props} />
   ),
-  // Warm paper-toned background (--color-code), NOT a dark terminal theme —
-  // code should sit inside the palette, not fight it. rehype-pretty-code
-  // is configured with keepBackground: false so shiki's own theme
-  // background is dropped and this fills it instead; only the per-token
-  // text colors from the "github-light" theme survive.
+  // Warm paper-toned background (--color-code) instead of shiki's default theme background.
   pre: (props: ComponentProps<"pre">) => (
     <pre
       className="my-6 overflow-x-auto rounded border border-rule bg-code p-4 font-mono text-sm [&>code]:bg-transparent [&>code]:p-0"
@@ -81,23 +62,16 @@ export const mdxComponents = {
     if (typeof src !== "string") return null;
     return <FlatFrame src={src} alt={alt ?? ""} width={800} height={500} fluid className="my-6" />;
   },
-  // Raw <video> tags authored directly in MDX (no dedicated Video
-  // component exists yet). block + mx-auto centers it the same way
-  // FlatFrame centers images — max-w-full keeps a wide source from
-  // overflowing the prose column.
+  // Raw <video> tags authored directly in MDX. Centered, capped to the prose column width.
   video: (props: ComponentProps<"video">) => (
     <video className="mx-auto my-6 block max-w-full" {...props} />
   ),
-  // <iframe> covers both current uses in content/projects — YouTube video
-  // embeds and the PDF poster viewer — so it gets the same default
-  // centering as img/video.
+  // Used for YouTube embeds and the PDF poster viewer.
   iframe: (props: ComponentProps<"iframe">) => (
     <iframe className="mx-auto my-6 block max-w-full" {...props} />
   ),
 
-  // Custom components authors use directly in MDX bodies — see each
-  // component's own file for its spec. Without these every project page
-  // is an undifferentiated wall of text.
+  // Custom components authors use directly in MDX bodies.
   Figure,
   ImagePair,
   FullBleed,

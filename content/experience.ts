@@ -7,15 +7,7 @@ export interface ExperienceItem {
   end: string;
 }
 
-/**
- * PLACEHOLDER entries — obviously so (literal "PLACEHOLDER" role/org strings,
- * generic "MMM YYYY" date tokens rather than fabricated real ones), per this
- * site's existing convention (see app/about/page.tsx's bio paragraph, or the
- * prior stub's "PLACEHOLDER — currently item one/two"). Real dates and
- * employers are owed by the site owner, not invented here. Same entry count
- * (three) as the prior stub's two "Currently" bullets plus its one Education
- * line, now unified into one list.
- */
+/** Experience entries shown on the About page, most recent first. */
 export const EXPERIENCE: ExperienceItem[] = [
   {
     role: "Undergrad Researcher",

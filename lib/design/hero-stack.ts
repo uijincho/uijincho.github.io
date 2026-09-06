@@ -7,14 +7,8 @@ export interface HeroStackOffset {
 
 /**
  * Resting offsets for the hero photo stack, indexed by depth (0 = top
- * card). These are exact spec values, deliberately NOT derived from the
- * generic ROTATIONS array (lib/design/rotation.ts) — that array is for
- * arbitrary PhotoFrame placements elsewhere on the site; this is a
- * specific, hand-tuned choreography for exactly four cards in the hero.
- *
- * The pull-out animation (Pass 2) reads from this same array — depth 0's
- * offset is always where a card rests at the top of the stack, regardless
- * of which photo is currently in that slot.
+ * card). The pull-out animation also reads from this array — depth 0's
+ * offset is always where a card rests at the top of the stack.
  */
 export const HERO_STACK_OFFSETS: HeroStackOffset[] = [
   { x: 15, y: 0, rotate: 3, z: 10 },

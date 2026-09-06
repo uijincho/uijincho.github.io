@@ -15,10 +15,7 @@ interface FigureProps {
  */
 export function Figure({ src, alt, caption, number }: FigureProps) {
   return (
-    // table + mx-auto (not a plain block): shrink-wraps this outer figure
-    // to the image's own rendered width — same trick FlatFrame uses — so
-    // the figcaption below, a block child, is only ever as wide as the
-    // image instead of stretching to the full prose column.
+    // Shrink-wraps the figure to the image's width, so the caption doesn't stretch full-width.
     <figure className="table mx-auto my-8">
       <FlatFrame src={src} alt={alt} width={800} height={500} fluid />
       {caption || number != null ? (

@@ -4,7 +4,7 @@ interface ImagePairProps {
   a: string;
   b: string;
   caption?: string;
-  /** Alt text for each image. Defaults to empty (decorative) if omitted — pass real alt text when the images carry information the caption doesn't cover. */
+  /** Alt text for each image; defaults to empty (decorative). */
   altA?: string;
   altB?: string;
 }

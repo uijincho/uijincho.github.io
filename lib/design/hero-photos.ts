@@ -4,13 +4,7 @@ export interface HeroPhoto {
   alt: string;
 }
 
-/**
- * The four hero stack photos, configured in one place — real photos
- * (me, workspace, lab) land here later, replacing these placeholders.
- * Four is the intended count: HERO_STACK_OFFSETS (lib/design/hero-stack.ts)
- * is tuned for exactly four depths. A different count still renders (via
- * modulo indexing), but four is the design target.
- */
+/** The four hero stack photos. HERO_STACK_OFFSETS (lib/design/hero-stack.ts) is tuned for exactly four. */
 export const HERO_PHOTOS: HeroPhoto[] = [
   {
     src: "/images/hero/photo-1.png",

@@ -11,12 +11,8 @@ const FILTERS: { value: Filter; label: string }[] = [
 ];
 
 /**
- * Mobile-only horizontal filter row, replacing the desktop sticky sidebar
- * (which is just scroll-to navigation, not filtering — see CategoryNav).
- * This component only owns the `data-active-filter` attribute; the actual
- * show/hide is a plain CSS attribute-selector rule in globals.css scoped
- * to the mobile breakpoint, not JS-driven display toggling — no animation
- * library, minimal client JS.
+ * Mobile-only horizontal filter row. Sets a `data-active-filter`
+ * attribute; the actual show/hide is a CSS rule in globals.css.
  */
 export function WorkFilter({ children }: { children: React.ReactNode }) {
   const [filter, setFilter] = useState<Filter>("all");

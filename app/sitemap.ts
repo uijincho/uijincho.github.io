@@ -2,11 +2,11 @@ import type { MetadataRoute } from "next";
 import { getAllProjects } from "@/lib/projects";
 import { SITE_URL } from "@/lib/site";
 
-// Next.js convention: this file's default export becomes /sitemap.xml at
-// build time. Static routes plus one entry per project slug — pulled from
-// the same getAllProjects() the /work index and [slug] page already use,
-// so a new .mdx file under content/projects automatically shows up here
-// too, no second place to remember to update.
+// Required for `output: "export"`.
+export const dynamic = "force-static";
+
+// Default export becomes /sitemap.xml at build time: static routes plus
+// one entry per project slug.
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 

@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /*
- * --font-display (Archivo)   headings only
- * --font-sans    (Inter)     UI/labels/nav/card text — the default body font
- * --font-serif   (Newsreader) long-form MDX article body ONLY, never UI text
+ * --font-display (Archivo)    headings
+ * --font-sans    (Inter)      default body font, UI/labels/nav/card text
+ * --font-serif   (Newsreader) long-form MDX article body
  * --font-mono    (JetBrains Mono) meta/labels/tags/index numbers
  */
 @theme inline {
@@ -14,15 +14,8 @@
 }
 
 /*
- * Palette. Ink is a warm brown-black, not neutral — never substitute #000 or
- * gray anywhere derived from it. Accent (maroon) and support (brick) are both
- * real accents, not accent+quiet-support, so the two tracks read as equal
- * weight. There is no third neutral hue: anything that needs to recede uses
- * --color-ink-muted. --color-rule is derived from --color-ink via color-mix,
- * never a hardcoded gray, so a future ink change propagates to every hairline.
- *
- * Contrast against --color-base, verified: ink 14.9, muted 5.6, accent 11.5,
- * support 5.4 — all pass WCAG AA for normal text. Do not lighten any of these.
+ * Palette: warm brown-black ink, maroon accent, brick support. Contrast
+ * against --color-base is WCAG AA-compliant for normal text.
  */
 @theme {
   --color-base: #f0ede6;
@@ -32,12 +25,7 @@
   --color-accent: #5e101e;
   --color-support: #a0442a;
   --color-rule: color-mix(in srgb, var(--color-ink) 15%, transparent);
-  /*
-   * Code block surface only (mdx-components.tsx `pre`). An explicit
-   * addition, not a drift from "no third neutral hue" — code needs to sit
-   * inside the warm-paper palette rather than fighting it with a dark
-   * terminal theme, and this specific value was specified directly.
-   */
+  /* Code block background (mdx-components.tsx `pre`). */
   --color-code: #eae6dc;
 }
 
@@ -47,25 +35,13 @@ body {
   color: var(--color-ink);
 }
 
-/*
- * Focus states, site-wide. Plain CSS outline, deliberately NOT Tailwind's
- * ring-* utilities (box-shadow based) — outline survives a Tailwind
- * version change and never gets clipped by a parent's overflow:hidden.
- * Applies to every interactive element automatically; components must not
- * add their own ring-* classes or override this away.
- */
+/* Focus states, site-wide: plain CSS outline on every interactive element. */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-/*
- * /work mobile filter (components/work/WorkFilter.tsx). The filter row
- * only sets a data-active-filter attribute; this is what actually hides
- * sections — plain CSS attribute selectors, no JS-driven display toggling,
- * scoped to below the md breakpoint since desktop always shows both tracks
- * via the sticky sidebar instead.
- */
+/* /work mobile filter (components/work/WorkFilter.tsx): hides the non-selected track's section below the md breakpoint. */
 @media (max-width: 767px) {
   [data-active-filter="software"] [data-kind="research"],
   [data-active-filter="research"] [data-kind="software"] {
@@ -75,29 +51,11 @@ body {
 
 /*
  * ~uijincho identity mark typing effect (components/hero/HandwrittenName.tsx).
- * Purely decorative — the <h1> always holds the real text separately via a
- * sr-only span; this only animates the *visible* width of an aria-hidden
- * copy, never textContent. steps(9) and the 9ch widths below are
- * intentionally hardcoded to the fixed 9-character "~uijincho" string, not
- * derived from it — a monospace font (JetBrains Mono) makes each step
- * exactly one character wide.
- *
- * Loops on a --identity-cycle cycle (default 15s, set on the <h1>'s own
- * `.identity-mark` class below), purely via CSS (no JS re-trigger): the
- * first 3% of the cycle plays the steps(9) reveal, per-keyframe
- * `animation-timing-function` scopes that stepping to just that segment,
- * then width holds at 9ch for the rest of the cycle until it snaps back to
- * 0 and retypes.
- *
- * The cursor's blink duration (further down) is derived from this SAME
- * variable rather than its own separately-tuned literal — two independent
- * animation durations with no common factor drift out of phase with each
- * other over repeated loops, which is exactly what previously let the
- * cursor blink off mid-reveal on some (not all) retypes: 15s and a fixed
- * 1060ms blink share no clean multiple, so the cursor's blink-off moment
- * landed at a different point in the reveal window every cycle, including
- * inside it. Tie both to one variable and that class of bug can't recur,
- * including whenever this cycle length itself gets tuned.
+ * Decorative only — animates the visible width of an aria-hidden copy,
+ * never the real text. steps(9) and 9ch match the fixed 9-character
+ * "~uijincho" string in a monospace font. Loops every --identity-cycle
+ * (default 15s); the cursor's blink duration below is derived from the
+ * same variable so the two stay in sync.
  */
 .identity-mark {
   --identity-cycle: 15s;
@@ -114,19 +72,7 @@ body {
   }
 }
 
-/*
- * Abrupt on/off within each half of the cycle, not a fade — reads as a
- * terminal cursor, not a pulsing dot. Its own duration (set below, on
- * .identity-cursor) is calc(--identity-cycle / 15), not a fixed ms value —
- * an exact divisor of the typing loop, so it always completes a whole
- * number of blinks (15) per loop and resets to phase 0 exactly when the
- * next retype starts, every time, at any --identity-cycle. Its "on" half
- * (0%-49% here = 49% of ITS duration = --identity-cycle * 49/(15*100) ≈
- * 3.267% of the full cycle) is arithmetically guaranteed to outlast the
- * typewriter's 3%-of-cycle reveal above (3.267% > 3%, always, regardless
- * of --identity-cycle's value) — the cursor cannot blink off before a
- * retype finishes.
- */
+/* Abrupt on/off blink, reading as a terminal cursor rather than a fade/pulse. */
 @keyframes identity-cursor-blink {
   0%,
   49% {
@@ -160,13 +106,8 @@ body {
 
 /*
  * Hero sticker tooltip Escape-dismiss (components/hero/HeroSticker.tsx).
- * Tooltip show/hide is otherwise pure CSS (group-hover/focus-visible) —
- * this is the one thing CSS pseudo-classes can't do, respond to a
- * keypress, which WCAG 1.4.13 needs. A window-level keydown handler sets
- * data-dismissed on the wrapper when Escape is pressed while it's
- * hovered/focused; this rule force-hides the tooltip when that's set,
- * overriding the hover/focus-visible opacity rules regardless of
- * stylesheet order. Resets on mouseleave/blur.
+ * Force-hides the tooltip when the wrapper's data-dismissed attribute is
+ * set by a keydown handler, satisfying WCAG 1.4.13.
  */
 .hero-sticker[data-dismissed="true"] [role="tooltip"] {
   opacity: 0 !important;
@@ -174,81 +115,10 @@ body {
 
 /*
  * Desk zone background photo fade (components/hero/NotebookHero.tsx).
- * mask-image on the photo's own <img> (via next/image's `className`) —
- * erodes the photo's alpha directly so whatever sits beneath it (body's
- * own base color + grain, see .grain below) shows through where it
- * fades. One mask, one photo layer; no separate overlay div stacked on
- * top of it, and — as of the seam fix documented below — no separate
- * flat-color div underneath it either.
- *
- * Linear, not radial: fades only toward the BOTTOM of the hero. Left,
- * right, and top stay at full opacity — `to bottom` only varies alpha
- * along the y-axis, so it cannot touch the left/right edges regardless
- * of the hero's aspect ratio. (An earlier radial-ellipse version faded
- * on all four sides — replaced outright, not layered under this.)
- *
- * Earlier attempts at mask-image on this same <img> hit a real Chromium
- * issue, but a RADIAL-gradient-specific one: confirmed by live-mutating
- * an already-loaded page's mask value repeatedly (so image load time
- * wasn't a confound) that a radial-gradient mask silently doesn't fade
- * at all once either ellipse radius exceeds 50% of the box's matching
- * dimension. That's a property of radial-gradient's own geometry
- * (its 100% stop sits `radius` away from center, so a radius >=50% of a
- * dimension pushes that stop at-or-past the box's own edge) and does not
- * apply to a linear-gradient, which has no radius/center-distance
- * concept — confirmed no analogous flatline here across the viewport
- * heights tested below.
- *
- * Same "don't let the transparent stop land exactly on the boundary"
- * principle still applies, just along one axis: the falloff starts at
- * 65% (not right at the bottom) and reaches full transparency at 100%,
- * so the transition is a gradual band rather than a sharp line, and (per
- * the mask spanning the full hero section, see the wrapping div in
- * NotebookHero) has nowhere left to clip before finishing.
- *
- * Eased, not a single linear ramp, from 50% to 100% — found after a
- * visible seam was reported right where the photo hands off to the page
- * content below. Every literal check at the time came back clean: the
- * mask's own terminal stop genuinely resolves to alpha 0 (confirmed via
- * getComputedStyle, not just this source), --color-desk and --color-base
- * compute to the identical rgb(240,237,230), the <section> itself has no
- * separate background of its own, and the <img>/its wrapper/the
- * flat-color div/the section all share the exact same bounding box —
- * nothing was clipping short or mismatched in color. Direct
- * pixel-sampling of the rendered output (not eyeballing) also found no
- * discrete single-row jump — the raw alpha ramp really is continuous.
- * That analysis was real (a single linear stop does let this photo's
- * own high-contrast detail stay legible for most of the ramp, then
- * decline to zero at a constant rate, which is worth the eased tail
- * below on its own merits) but it did NOT fix the reported seam —
- * a fresh screenshot after this change showed the identical hard line
- * in the identical place, because it was solving a color/alpha
- * continuity problem and the seam was never that.
- *
- * The actual cause: the flat-color div this mask used to fade into had
- * its own `grain` instance (components/hero/NotebookHero.tsx, since
- * removed) — a second, independent noise pattern stacked directly in
- * front of <body>'s own `grain` layer (see .grain below). Two separate
- * `.grain` instances never tile continuously with each other no matter
- * how exactly their color and opacity match, because each one's
- * mask-image starts its noise tile at its own box's origin — CSS
- * backgrounds don't share a coordinate space across element boundaries.
- * That boundary, sitting right where the mask finishes fading (i.e.
- * exactly the reported location), was the seam. Confirmed by grepping
- * every `.grain`/mask-image/noise reference in and around the hero: the
- * flat div was the one surface with a `grain` class of its own instead
- * of relying on body's, unlike every other route wrapper on the site
- * (which stay plain `position: relative`, per .grain's own comment,
- * specifically so body's one layer shows through them). Fixed by
- * deleting that div's fill and `grain` outright rather than adjusting
- * either instance to match the other — since --color-desk was already
- * confirmed identical to --color-base, and <main>/<section> paint
- * nothing opaque over this zone, body's own layer now shows through
- * directly with nothing in front of it to mismatch. Slopes per segment
- * below: 0.035, 0.025, 0.015, 0.005 (opacity per percent of section
- * height) — kept as the eased tail regardless, since it's still a real
- * improvement over a single constant-rate linear stop, just not the fix
- * for the seam itself.
+ * mask-image on the photo's own <img>, eroding its alpha so body's base
+ * color + grain show through underneath. Linear (not radial), fading
+ * only toward the bottom — left, right, and top stay full opacity.
+ * Eased ramp from 50% to 100% rather than a single linear stop.
  */
 .hero-desk-mask {
   -webkit-mask-image: linear-gradient(
@@ -272,84 +142,27 @@ body {
 }
 
 /*
- * Shared grain texture — the single source of truth every candidate
- * surface opts into by adding the `grain` class, the same way every
- * shadow on the site goes through lib/design/light.ts's shadowFor()
- * instead of each component hardcoding its own box-shadow. One rule,
- * reused as-is everywhere: notebook pages, the desk zone's flat-color
- * fallback, PhotoFrame, FlatFrame's no-image fallback, HeroPhotoCard,
- * and — the actual base page background, see below — <body> itself.
+ * Shared grain texture, applied via the `grain` class: notebook pages,
+ * PhotoFrame, FlatFrame's no-image fallback, HeroPhotoCard, and <body>
+ * itself (the base page background).
  *
  * Host element must be a positioning context (anything but `position:
- * static`) for this `::before`'s `inset: 0` to size against just that
- * element rather than a further-out ancestor. Deliberately NOT baked
- * into this class as `.grain { position: relative }` — several hosts
- * (the hero desk div) are already `position: absolute`, and a same-
- * specificity `.grain` rule setting `relative` could win the cascade
- * over Tailwind's `absolute` utility depending on source order, silently
- * breaking their actual positioning. Each usage supplies its own
- * `relative` alongside `grain` only where it doesn't already have a
- * non-static position — see each call site's comment.
+ * static`) for this `::before`'s `inset: 0` to size correctly; each
+ * usage supplies its own `relative` where needed rather than baking it
+ * into this class, since some hosts are already `position: absolute`.
  *
- * `::before`, not `::after`, and this matters specifically for the
- * <body> usage: per CSS's painting-order rules, a positioned descendant
- * with z-index:auto (this pseudo-element) always paints ABOVE any
- * non-positioned in-flow sibling, regardless of DOM order — so if <main>
- * and <footer> (body's real children) were left as plain `position:
- * static`, body's own grain would paint OVER their entire content,
- * gradient-multiply-blending literal text and images. The fix: <main>
- * and <footer> both stay `position: relative` (without their own
- * `grain`) specifically so they land in the SAME painting category as
- * body's pseudo-element (positioned, z-index:auto) — DOM/tree order then
- * breaks the tie normally, and ::before (conceptually body's first
- * child) is tree-order-EARLIER than the real <main>/<footer> children
- * that come after it, so it paints first — i.e. behind them. Using
- * ::after here would tree-order-tie in the wrong direction (last child,
- * paints last, i.e. on top). This was found and fixed after the first
- * version put `grain` on each route's inner max-w wrapper instead of on
- * <body> — that widened-container-vs-viewport-width gap (visible margin
- * strips outside max-w-[90rem]/etc. with no texture) is exactly what
- * "the base page background" was supposed to mean; a per-route wrapper
- * capped at some max-width can never be the full page background,
- * however wide it is, since a wide-enough viewport always exceeds it.
- *
- * Technique: mask-image, NOT background-image, carries the noise. The
- * SVG data URI is a static string — it cannot read `var(--color-ink)`,
- * so it never encodes a color at all, only a shape: feTurbulence
- * generates RGBA noise, and the feColorMatrix passes the (already-noisy)
- * alpha channel straight through while zeroing R/G/B, so the resulting
- * image is "black, opacity varies per-pixel." CSS mask-image defaults to
- * alpha mode for non-SVG-<mask> sources, so that per-pixel alpha becomes
- * the mask directly. The actual visible color is an ordinary, LIVE
- * `background-color: var(--color-ink)` on this same element — masked by
- * the noise shape, not baked into it. If --color-ink is ever retuned,
- * grain follows automatically, same as every LIGHT-derived shadow does.
- * This is deliberate: baking a static copy of ink's hex value into the
- * SVG string was the alternative and was rejected — it would duplicate
- * the token exactly the way this codebase avoids everywhere else
- * (--color-rule's color-mix, shadowFor()'s color-mix).
- *
- * 128x128 tile, mask-repeat: repeat — small on purpose, both so the data
- * URI stays a few hundred bytes and so the browser only ever decodes one
- * shared bitmap (every `.grain` usage references the identical string,
- * so the image cache serves one decoded copy site-wide, not one per
- * element). opacity 0.045 and mix-blend-mode: multiply are the full
- * extent of the effect — no gradient, no second shadow, nothing else
- * layered in.
+ * Technique: mask-image (not background-image) carries the noise via an
+ * SVG feTurbulence filter; the visible color comes from a live
+ * `background-color: var(--color-ink)`, masked by the noise shape, so
+ * it follows any future --color-ink change automatically. 128x128 tile,
+ * repeated; opacity 0.045, mix-blend-mode: multiply.
  */
 .grain::before {
   content: "";
   position: absolute;
   inset: 0;
-  /* Matches whatever border-radius the host itself has (e.g. the notebook
-     pages' outer-corner rounding below) via the literal `inherit` keyword
-     — this works even though border-radius isn't a normally-inherited
-     property, and it's what lets this inset:0 pseudo-element's own corners
-     follow the host's rounded shape WITHOUT needing `overflow: hidden` on
-     the host. That matters specifically for the notebook hero's left page,
-     which can never get overflow:hidden (see .notebook-page-left's comment
-     below). Resolves to 0 (a no-op) on every other `.grain` host, since
-     none of them set a border-radius of their own. */
+  /* Matches the host's own border-radius, so this pseudo-element's corners
+     follow the host's rounded shape without needing overflow:hidden. */
   border-radius: inherit;
   background-color: var(--color-ink);
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -364,33 +177,11 @@ body {
 }
 
 /*
- * Notebook page shape (components/hero/NotebookHero.tsx' two page divs).
- * Two additions, each scoped to a page's own OUTER edge — the edge away
- * from the spine, never the spine-side edge:
- *   1. Corner rounding on that page's two outer corners only (top-left +
- *      bottom-left on the left page, top-right + bottom-right on the
- *      right page). The two spine-side corners on each page stay square —
- *      a real binding doesn't round at the fold.
- *   2. A thin vertical strip right at that outer edge, in --color-ink at
- *      low opacity, suggesting the thickness of stacked paper. Inset a
- *      couple px from the true edge; never on the spine-side edge, and
- *      never wide enough to read as a rule across the page.
- *
- * Both use a fixed px value, not a relative unit — the notebook's outer
- * size scales with the viewport (min(72vw, 850px), see NotebookHero's own
- * doc comment) but interior details, this included, stay fixed regardless
- * of how big the notebook itself gets.
- *
- * The edge strip (a ::after, so it paints above `.grain`'s ::before and
- * above the page's own in-flow content at the same auto z-index — tree
- * order breaks the tie, see .grain's own comment for the general
- * mechanism) can't rely on overflow:hidden to clip itself to the rounded
- * corner: the left page specifically can never get overflow:hidden (the
- * photo stack's hover pull-out crosses the page boundary toward the
- * gutter — see NotebookHero's and HeroPhotoStack's own doc comments).
- * Instead it simply stops --notebook-page-radius short of each end, i.e.
- * it never enters the curved corner region to begin with, which reads
- * identically to a full-height strip actually clipped by that curve.
+ * Notebook page shape (components/hero/NotebookHero.tsx's two page divs).
+ * Rounds each page's two outer corners only (spine-side corners stay
+ * square), and draws a thin vertical strip near the outer edge
+ * suggesting stacked paper thickness. Fixed px values, not relative
+ * units — interior details stay fixed regardless of notebook size.
  */
 :root {
   --notebook-page-radius: 12px;

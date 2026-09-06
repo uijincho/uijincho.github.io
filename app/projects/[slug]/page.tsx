@@ -23,10 +23,7 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug);
   if (!project) return {};
 
-  // Short title, not "X — Uijin Cho" — the root layout's title.template
-  // appends the suffix once, centrally (see app/layout.tsx). thumbnail is
-  // a site-relative path; it resolves against metadataBase (also set in
-  // the root layout) rather than needing an absolute URL here.
+  // Short title; the root layout's title.template appends the site suffix.
   return {
     title: project.title,
     description: project.summary,
@@ -52,43 +49,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = index >= 0 && index < all.length - 1 ? all[index + 1] : undefined;
 
   return (
-    // max-w-5xl matches the /work index's visible content column exactly
-    // (WorkIndexBody's inner max-w-5xl wrapper, nested inside its own wider
-    // max-w-[90rem] frame — the two collapse to the same centered width
-    // and padding as this single wrapper, since the outer frame's cap
-    // never binds tighter than 5xl at any realistic viewport).
-    //
-    // The MDX prose body used to cap itself at max-w-[68ch] (a leftover
-    // readability measure from the original spec) — removed. It resolved
-    // to 686px against the metadata block's 848px content width with no
-    // visible edge marking the difference, so the prose just looked like
-    // it was wrapping arbitrarily short of everything around it. The
-    // prose <div> below is now a plain, unconstrained block, so it fills
-    // <main>'s content width exactly like ProjectMeta's <dl> already did —
-    // confirmed by measuring both at 848px, at more than one viewport
-    // width, not just eyeballing one. The summary line above keeps its
-    // own max-w-[68ch]; that one line was never reported as the bug.
-    //
-    // w-full is load-bearing, not decorative: <body> is `flex flex-col`
-    // (app/layout.tsx), and this <main> is a *direct* flex item of it (no
-    // plain-block wrapper in between, unlike WorkIndexBody's own two
-    // nested divs). A flex item with auto cross-axis margins and an auto
-    // width doesn't stretch to fill the line the way a plain block does —
-    // it shrinks to its content's width instead (measured: ~734px, not
-    // the intended 1024px), so mx-auto + max-w-5xl alone rendered narrower
-    // than /work. Same root cause, same fix, as the earlier homepage
-    // width bug. w-full removes the ambiguity: width is no longer "auto",
-    // so the flex auto-margin-suppresses-stretch special case doesn't
-    // apply, and max-w-5xl caps it normally. Verified: renders at
-    // left:303.7px / width:1024px, identical to /work's content column.
-    //
-    // relative (no grain here) — the actual base-page-background texture
-    // lives on <body> (globals.css, app/layout.tsx), not per-route. This
-    // was the bug: a wrapper capped at max-w-4xl can never BE the full
-    // page background at wider viewports, whatever the cap. `relative`
-    // stays regardless — it keeps this <main> in the same CSS painting
-    // category as body's grain pseudo-element, so that layer sits behind
-    // this page's content instead of over it (see .grain's comment).
+    // w-full is needed since <main> is a direct flex item of <body>
+    // (app/layout.tsx), so an auto width would shrink to content instead
+    // of stretching. `relative` lets body's grain texture (globals.css)
+    // show through behind this page.
     <main className="relative mx-auto w-full max-w-4xl px-6 py-16">
       <span className={`${TYPE.meta} ${KIND_ACCENT_TEXT[project.kind]}`}>{KIND_LABEL[project.kind]}</span>
       <h1 className={`${TYPE.displayLg} mt-2 text-ink`}>{project.title}</h1>
@@ -98,8 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <ProjectMeta project={project} />
       </div>
 
-      {/* Long-form MDX prose, Newsreader. Full container width — no ch
-          measure — see the doc comment on <main> above for why. */}
+      {/* Long-form MDX prose, Newsreader, full container width. */}
       <div className="mt-10">
         <MDXRemote
           source={project.content}
