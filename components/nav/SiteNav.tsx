@@ -18,7 +18,6 @@ const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"] });
 const LINKS = [
   { href: "/#section-software", label: "projects/" },
   { href: "/about", label: "about/" },
-  { href: "/about#contact", label: "contact/" },
 ];
 
 /**
