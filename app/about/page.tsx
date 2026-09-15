@@ -110,10 +110,10 @@ export default function About() {
           <div className="order-3 md:order-none">
             <div className="border-t border-rule pt-8 text-center">
               <p className="font-mono text-sm uppercase tracking-wide text-accent">
-                Sc.B. Applied Mathematics-Computer Science
+                Brown University
               </p>
               <p className="mt-1 font-mono text-xs uppercase tracking-wide text-ink-muted">
-                Brown University, 2025–2029
+                B.S. Applied Mathematics-Computer Science
               </p>
 
               <ContactIcons className="mt-6" />

@@ -17,9 +17,9 @@ export const HERO_PHOTOS: HeroPhoto[] = [
     alt: "prev swe intern @ GoDaddy",
   },
   {
-    src: "/images/hero/photo-3.png",
-    caption: "blu's hacks 2024",
-    alt: "blu's hacks 2024",
+    src: "/images/hero/photo-3.jpg",
+    caption: "Brown DEEPS Dive Research Symposium 2026",
+    alt: "Brown DEEPS Dive Research Symposium 2026",
   },
   {
     src: "/images/hero/photo-4.png",
